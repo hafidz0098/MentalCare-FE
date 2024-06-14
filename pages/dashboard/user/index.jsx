@@ -147,16 +147,16 @@ function Dashboard(props) {
               ></i>
             </div>
           </nav>
-          <div class="container">
-            <div class="row">
-              <div class="col-md-4 col-xl-3">
+          <div className="container">
+            <div className="row">
+              <div className="col-md-4 col-xl-3">
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div class="card-dash bg-c-blue order-card">
-                    <div class="card-block">
-                      <h6 class="m-b-20">Total Konsultasi</h6>
-                      <h2 class="text-right">
+                  <div className="card-dash bg-c-blue order-card">
+                    <div className="card-block">
+                      <h6 className="m-b-20">Total Konsultasi</h6>
+                      <h2 className="text-right">
                         <span>{totalConsultations}</span>
                       </h2>
                     </div>
@@ -164,14 +164,14 @@ function Dashboard(props) {
                 )}
               </div>
 
-              <div class="col-md-4 col-xl-3">
+              <div className="col-md-4 col-xl-3">
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div class="card-dash bg-c-yellow order-card">
-                    <div class="card-block">
-                      <h6 class="m-b-20">Konsultasi Pending</h6>
-                      <h2 class="text-right">
+                  <div className="card-dash bg-c-yellow order-card">
+                    <div className="card-block">
+                      <h6 className="m-b-20">Konsultasi Pending</h6>
+                      <h2 className="text-right">
                         <span>{pendingConsultations}</span>
                       </h2>
                     </div>
@@ -179,32 +179,32 @@ function Dashboard(props) {
                 )}
               </div>
 
-              <div class="col-md-4 col-xl-3">
+              <div className="col-md-4 col-xl-3">
                 {isLoading ? (
                   <div>
                   <SkeletonLine />
                   </div>
                 ) : (
-                  <div class="card-dash bg-c-green order-card">
-                    <div class="card-block">
-                      <h6 class="m-b-20">Konsultasi Terjawab</h6>
-                      <h2 class="text-right">
+                  <div className="card-dash bg-c-green order-card">
+                    <div className="card-block">
+                      <h6 className="m-b-20">Konsultasi Terjawab</h6>
+                      <h2 className="text-right">
                         <span>{answeredConsultations}</span>
                       </h2>
                     </div>
                   </div>
                 )}
               </div>
-              <div class="col-md-4 col-xl-3">
+              <div className="col-md-4 col-xl-3">
                 {isLoading ? (
                   <div>
                   <SkeletonLine />
                   </div>
                 ) : (
-                  <div class="card-dash bg-c-green order-card">
-                    <div class="card-block">
-                      <h6 class="m-b-20">Kuis Sudah Dikerjakan</h6>
-                      <h2 class="text-right">
+                  <div className="card-dash bg-c-green order-card">
+                    <div className="card-block">
+                      <h6 className="m-b-20">Kuis Sudah Dikerjakan</h6>
+                      <h2 className="text-right">
                         <span>{answeredConsultations}</span>
                       </h2>
                     </div>
