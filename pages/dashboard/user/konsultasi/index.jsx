@@ -12,7 +12,7 @@ import { Column } from "primereact/column";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-// import excerpt from "../../../utils/excerpt";
+import excerpt from "../../../../utils/excerpt";
 import { format } from "date-fns";
 
 // Skeleton line component
@@ -114,7 +114,7 @@ function ShowKonsuls({ konsuls, user }) {
                         header="Pesan"
                         body={(rowData) => (
                           <span style={{ whiteSpace: "nowrap" }}>
-                            {rowData.message}
+                            {excerpt(rowData.message, 80)}
                           </span>
                         )}
                       ></Column>

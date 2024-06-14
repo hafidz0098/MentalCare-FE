@@ -13,7 +13,7 @@ import { Column } from "primereact/column";
 import "primereact/resources/themes/saga-blue/theme.css"; // Tema CSS (Anda dapat memilih tema lain jika Anda mau)
 import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icon CSS
-// import excerpt from "../../../utils/excerpt";
+import excerpt from "../../../../utils/excerpt";
 
 const SkeletonLine = () => (
   <div className="skeleton-line mb-3"></div>
@@ -184,7 +184,7 @@ function ShowPost(props) {
                       <span style={{ whiteSpace: "nowrap" }}>
                         <div
                           dangerouslySetInnerHTML={{
-                            __html: rowData.content,
+                            __html: excerpt(rowData.content, 80),
                           }}
                         />
                       </span>

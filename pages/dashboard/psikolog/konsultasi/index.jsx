@@ -14,7 +14,7 @@ import { Column } from "primereact/column";
 import "primereact/resources/themes/saga-blue/theme.css"; // Tema CSS (Anda dapat memilih tema lain jika Anda mau)
 import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icon CSS
-// import excerpt from "../../../utils/excerpt";
+import excerpt from "../../../../utils/excerpt";
 
 export async function getServerSideProps() {
   try {
@@ -129,7 +129,7 @@ function ShowKonsuls(props) {
                       header="Pesan"
                       body={(rowData) => (
                         <span style={{ whiteSpace: "nowrap" }}>
-                          {rowData.message}
+                          {excerpt(rowData.message, 80)}
                         </span>
                       )}
                     ></Column>
