@@ -1,0 +1,56 @@
+.hero{
+  min-height: 100vh;
+  background-image: url('/bg-7.png'); /* Specify the path to your background image */
+  background-size: cover; /* Cover the entire container */
+  background-position: center; /* Center the background image */
+  background-repeat: no-repeat; /* Do not repeat the background image */
+  display: flex;
+}
+
+.container_hero{
+  padding-top: 200px;
+}
+
+
+.title{
+    color: #02BBDD;
+    font-weight: bold;
+    font-size: 36px !important;
+}
+
+.desc{
+  color: #117183;
+  margin-top: 30px;
+}
+
+.heroBtn{
+  margin-top: 30px;
+}
+
+.kenali{
+  min-height: 75vh;
+  background-color: #f3f3f3 ;
+}
+
+.card_kenali{
+  border-radius: 10px !important;
+}
+
+.topik{
+  min-height: 100vh;
+}
+
+.icon-boxes {
+  padding-bottom: 60px;
+}
+
+
+
+
+
+@media only screen and (max-width: 992px) {
+  .artikel{
+    margin-bottom: 40px;
+  }
+
+}
