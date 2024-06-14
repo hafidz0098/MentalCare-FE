@@ -184,7 +184,7 @@ function ShowPost(props) {
                       <span style={{ whiteSpace: "nowrap" }}>
                         <div
                           dangerouslySetInnerHTML={{
-                            __html: excerpt(rowData.content, 80),
+                            __html: rowData.content,
                           }}
                         />
                       </span>

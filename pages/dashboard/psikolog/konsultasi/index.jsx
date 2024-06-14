@@ -129,7 +129,7 @@ function ShowKonsuls(props) {
                       header="Pesan"
                       body={(rowData) => (
                         <span style={{ whiteSpace: "nowrap" }}>
-                          {excerpt(rowData.message, 80)}
+                          {rowData.message}
                         </span>
                       )}
                     ></Column>
