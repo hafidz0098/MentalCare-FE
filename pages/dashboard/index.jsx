@@ -21,7 +21,7 @@ export async function getServerSideProps() {
 
     return {
       props: {
-        konsuls,
+        konsuls: konsuls || [], // Ensure konsuls is an array
       },
     };
   } catch (error) {
@@ -71,13 +71,13 @@ function Dashboard(props) {
   };
 
   // Calculate total, answered, and pending consultations
-  const totalConsultations = props.konsuls.length;
-  const answeredConsultations = props.konsuls.filter(
-    (konsul) => konsul.status === "responded"
-  ).length;
-  const pendingConsultations = props.konsuls.filter(
-    (konsul) => konsul.status === "pending"
-  ).length;
+  const totalConsultations = props.konsuls ? props.konsuls.length : 0;
+  const answeredConsultations = props.konsuls
+    ? props.konsuls.filter((konsul) => konsul.status === "responded").length
+    : 0;
+  const pendingConsultations = props.konsuls
+    ? props.konsuls.filter((konsul) => konsul.status === "pending").length
+    : 0;
 
   useEffect(() => {
     if (!token) {
