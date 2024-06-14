@@ -1,6 +1,11 @@
 function excerpt(text, maxLength) {
-  if (text.length <= maxLength) return text;
-  return text.substr(0, text.lastIndexOf(" ", maxLength)) + "...";
+  const trimmedText = text.trim();
+  const lastSpaceIndex = trimmedText.lastIndexOf(" ", maxLength);
+  const excerpt =
+    lastSpaceIndex !== -1
+      ? `${trimmedText.substr(0, lastSpaceIndex)}...`
+      : trimmedText;
+  return excerpt;
 }
 
 export default excerpt;
