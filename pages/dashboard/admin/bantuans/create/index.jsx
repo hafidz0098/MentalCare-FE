@@ -52,9 +52,9 @@ function BantuanCreate() {
     await axios
       .post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/bantuans`, formData)
       .then(() => {
-        Swal.fire("Good job!", "Berhasil menambahkan artikel baru!", "success");
+        Swal.fire("Good job!", "Berhasil menambahkan bantuan layanan baru!", "success");
         //redirect
-        Router.push("/admin/dashboard");
+        Router.push("/dashboard/admin/bantuans");
       })
       .catch((error) => {
         //assign validation on state

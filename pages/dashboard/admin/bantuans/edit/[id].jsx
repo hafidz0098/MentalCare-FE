@@ -74,7 +74,7 @@ function BantuanEdit(props) {
         Swal.fire("Good job!", "Berhasil mengubah bantuan layanan!", "success");
 
         //redirect
-        Router.push("/admin/dashboard");
+        Router.push("/dashboard/admin/bantuans");
       })
       .catch((error) => {
         //assign validation on state

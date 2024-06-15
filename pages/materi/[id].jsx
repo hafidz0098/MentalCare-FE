@@ -110,7 +110,7 @@ function Post(props) {
                         <div className="col-lg-9" key={post.id}>
                             <div className={Styles.card_detail_artikel}>
                                 <div className="card-img">
-                                    <img src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/posts/${post.image}`} alt="" className="img-fluid"/>
+                                    <img src={post.image} alt="" className="img-fluid"/>
                                 </div>
                                 <div className={Styles.card_title_detail}>
                                     <h2>{post.title}</h2>

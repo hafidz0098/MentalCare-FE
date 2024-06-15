@@ -53,7 +53,7 @@ function Bantuan(props) {
                   <div class="member d-flex align-items-start">
                     <div class="pic">
                       <img
-                        src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/bantuans/${bantuan.image}`}
+                        src={bantuan.image}
                         class="img-fluid"
                         alt=""
                       />

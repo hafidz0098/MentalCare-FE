@@ -122,7 +122,7 @@ function TopikIndex(props) {
                         <div class="icon-box">
                           <div class="gambar_topik">
                             <img
-                              src={`${process.env.NEXT_PUBLIC_API_BACKEND}/storage/topiks/${topik.image}`}
+                              src={topik.image}
                               alt=""
                               srcset=""
                             />
