@@ -10,7 +10,8 @@ const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>
 export async function getServerSideProps() {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/topiks`
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/topiks`,
+      { timeout: 5000 } // 5 seconds timeout
     );
     const topiks = response.data?.data?.data || [];
 
@@ -24,24 +25,28 @@ export async function getServerSideProps() {
     return {
       props: {
         topiks: [],
+        error: error.message || "Error fetching topiks",
       },
     };
   }
 }
 
-function Home(props) {
-  const { topiks } = props;
+function Home({ topiks, error }) {
   const [loading, setLoading] = useState(true);
   const [latestTopiks, setLatestTopiks] = useState([]);
+  const [fetchError, setFetchError] = useState("");
 
   useEffect(() => {
-    if (topiks.length > 0) {
+    if (error) {
+      setFetchError(error);
+      setLoading(false);
+    } else if (topiks.length > 0) {
       setLatestTopiks(topiks.slice(0, 7));
       setLoading(false);
     } else {
       setLoading(false);
     }
-  }, [topiks]);
+  }, [topiks, error]);
 
   return (
     <Layout>
@@ -105,46 +110,46 @@ function Home(props) {
           <div className="icon-boxes position-relative">
             <div className="container position-relative">
               <div className="row gy-4 mt-5 justify-content-center">
-                {loading
-                  ? [...Array(7)].map((_, index) => (
-                      <div
-                        className="col-xl-3 col-md-6"
-                        key={index}
-                      >
-                        <SkeletonLine />
-                        <SkeletonLine />
-                        <SkeletonLine />
-                      </div>
-                    ))
-                  : latestTopiks.length === 0
-                  ? (
-                    <div className="col-12">
-                      <p>Belum ada topik yang tersedia.</p>
+                {loading ? (
+                  [...Array(7)].map((_, index) => (
+                    <div className="col-xl-3 col-md-6" key={index}>
+                      <SkeletonLine />
+                      <SkeletonLine />
+                      <SkeletonLine />
                     </div>
-                  ) : (
-                    latestTopiks.map((topik) => (
-                      <div
-                        className="col-xl-3 col-md-6"
-                        data-aos="fade-up"
-                        data-aos-delay="100"
-                        key={topik.id}
-                      >
-                        <div className="icon-box">
-                          <div className="gambar_topik">
-                            <img src={topik.image} alt={topik.name} />
-                          </div>
-                          <h4 className="title">
-                            <Link
-                              href={`/topik/materi/${topik.id}`}
-                              className="stretched-link"
-                            >
-                              {topik.name}
-                            </Link>
-                          </h4>
+                  ))
+                ) : fetchError ? (
+                  <div className="col-12">
+                    <p>Error loading topics: {fetchError}</p>
+                  </div>
+                ) : latestTopiks.length === 0 ? (
+                  <div className="col-12">
+                    <p>Belum ada topik yang tersedia.</p>
+                  </div>
+                ) : (
+                  latestTopiks.map((topik) => (
+                    <div
+                      className="col-xl-3 col-md-6"
+                      data-aos="fade-up"
+                      data-aos-delay="100"
+                      key={topik.id}
+                    >
+                      <div className="icon-box">
+                        <div className="gambar_topik">
+                          <img src={topik.image} alt={topik.name} />
                         </div>
+                        <h4 className="title">
+                          <Link
+                            href={`/topik/materi/${topik.id}`}
+                            className="stretched-link"
+                          >
+                            {topik.name}
+                          </Link>
+                        </h4>
                       </div>
-                    ))
-                  )}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
