@@ -3,7 +3,9 @@ import Head from "next/head";
 import Link from "next/link";
 import axios from "axios";
 import Styles from "../styles/Home.module.css";
-import Image from "next/image";
+import { useState, useEffect } from "react";
+
+const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
 
 export async function getServerSideProps() {
   try {
@@ -29,7 +31,17 @@ export async function getServerSideProps() {
 
 function Home(props) {
   const { topiks } = props;
-  const latestTopiks = topiks?.slice(0, 7) || [];
+  const [loading, setLoading] = useState(true);
+  const [latestTopiks, setLatestTopiks] = useState([]);
+
+  useEffect(() => {
+    if (topiks.length > 0) {
+      setLatestTopiks(topiks.slice(0, 7));
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [topiks]);
 
   return (
     <Layout>
@@ -64,58 +76,24 @@ function Home(props) {
             Yuk Kenali Berbagai Macam Penyakit Mental
           </div>
           <div className="row mt-5">
-            <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Skizofrenia</h5>
-                  <p className="card-text">
-                    Gangguan skizofrenia termasuk ke dalam gangguan psikotik
-                    yang membuat orang seperti melihat atau merasakan sesuatu.
-                    Saat mengidap gangguan skizofrenia, seseorang sulit
-                    membedakan mana kehidupan yang nyata dan mimpi.
-                  </p>
+            {[...Array(4)].map((_, index) => (
+              <div
+                className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch"
+                key={index}
+              >
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Skizofrenia</h5>
+                    <p className="card-text">
+                      Gangguan skizofrenia termasuk ke dalam gangguan psikotik
+                      yang membuat orang seperti melihat atau merasakan sesuatu.
+                      Saat mengidap gangguan skizofrenia, seseorang sulit
+                      membedakan mana kehidupan yang nyata dan mimpi.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Skizofrenia</h5>
-                  <p className="card-text">
-                    Gangguan skizofrenia termasuk ke dalam gangguan psikotik
-                    yang membuat orang seperti melihat atau merasakan sesuatu.
-                    Saat mengidap gangguan skizofrenia, seseorang sulit
-                    membedakan mana kehidupan yang nyata dan mimpi.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Skizofrenia</h5>
-                  <p className="card-text">
-                    Gangguan skizofrenia termasuk ke dalam gangguan psikotik
-                    yang membuat orang seperti melihat atau merasakan sesuatu.
-                    Saat mengidap gangguan skizofrenia, seseorang sulit
-                    membedakan mana kehidupan yang nyata dan mimpi.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title">Skizofrenia</h5>
-                  <p className="card-text">
-                    Gangguan skizofrenia termasuk ke dalam gangguan psikotik
-                    yang membuat orang seperti melihat atau merasakan sesuatu.
-                    Saat mengidap gangguan skizofrenia, seseorang sulit
-                    membedakan mana kehidupan yang nyata dan mimpi.
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -127,34 +105,46 @@ function Home(props) {
           <div className="icon-boxes position-relative">
             <div className="container position-relative">
               <div className="row gy-4 mt-5 justify-content-center">
-                {latestTopiks.length === 0 ? (
-                  <div className="col-12">
-                    <p>Belum ada topik yang tersedia.</p>
-                  </div>
-                ) : (
-                  latestTopiks.map((topik) => (
-                    <div
-                      className="col-xl-3 col-md-6"
-                      data-aos="fade-up"
-                      data-aos-delay="100"
-                      key={topik.id}
-                    >
-                      <div className="icon-box">
-                        <div className="gambar_topik">
-                          <img src={topik.image} alt={topik.name} />
-                        </div>
-                        <h4 className="title">
-                          <a
-                            href={`/topik/materi/${topik.id}`}
-                            className="stretched-link"
-                          >
-                            {topik.name}
-                          </a>
-                        </h4>
+                {loading
+                  ? [...Array(7)].map((_, index) => (
+                      <div
+                        className="col-xl-3 col-md-6"
+                        key={index}
+                      >
+                        <SkeletonLine />
+                        <SkeletonLine />
+                        <SkeletonLine />
                       </div>
+                    ))
+                  : latestTopiks.length === 0
+                  ? (
+                    <div className="col-12">
+                      <p>Belum ada topik yang tersedia.</p>
                     </div>
-                  ))
-                )}
+                  ) : (
+                    latestTopiks.map((topik) => (
+                      <div
+                        className="col-xl-3 col-md-6"
+                        data-aos="fade-up"
+                        data-aos-delay="100"
+                        key={topik.id}
+                      >
+                        <div className="icon-box">
+                          <div className="gambar_topik">
+                            <img src={topik.image} alt={topik.name} />
+                          </div>
+                          <h4 className="title">
+                            <Link
+                              href={`/topik/materi/${topik.id}`}
+                              className="stretched-link"
+                            >
+                              {topik.name}
+                            </Link>
+                          </h4>
+                        </div>
+                      </div>
+                    ))
+                  )}
               </div>
             </div>
           </div>
