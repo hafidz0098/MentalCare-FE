@@ -10,11 +10,11 @@ export async function getServerSideProps() {
     const response = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BACKEND}/api/topiks`
     );
-    const topiks = response.data.data.data;
+    const topiks = response.data?.data?.data || [];
 
     return {
       props: {
-        topiks: topiks,
+        topiks,
       },
     };
   } catch (error) {
@@ -29,7 +29,7 @@ export async function getServerSideProps() {
 
 function Home(props) {
   const { topiks } = props;
-  const latestTopiks = topiks.slice(0, 7);
+  const latestTopiks = topiks?.slice(0, 7) || [];
 
   return (
     <Layout>
@@ -41,20 +41,19 @@ function Home(props) {
           <div className="row">
             <div className="col-text col-lg-6 col-sm-12">
               <h1 className={Styles.title}>
-              Belajar Tentang Kesehatan Mental dengan Asik dan Menyenangkan
+                Belajar Tentang Kesehatan Mental dengan Asik dan Menyenangkan
               </h1>
               <p className={Styles.desc}>
-              Ayo belajar tentang kesehatan mental bersama MentalCare yang siap memberikan kamu informasi yang lengkap seputar kesehatan mental
+                Ayo belajar tentang kesehatan mental bersama MentalCare yang
+                siap memberikan kamu informasi yang lengkap seputar kesehatan
+                mental
               </p>
-              <Link
-                href="/topik"
-                className={`btn btn-custom ${Styles.heroBtn}`}
-              >
+              <Link href="/topik" className={`btn btn-custom ${Styles.heroBtn}`}>
                 Selengkapnya
               </Link>
             </div>
             <div className="col-img col-lg-6 col-sm-12">
-              <img src="mental.png" alt="" />
+              <img src="mental.png" alt="Mental Health" />
             </div>
           </div>
         </div>
@@ -125,9 +124,9 @@ function Home(props) {
           <div className="title-section">
             Topik Kesehatan Mental yang Bisa Kamu Pelajari
           </div>
-          <div class="icon-boxes position-relative">
-            <div class="container position-relative">
-              <div class="row gy-4 mt-5 justify-content-center">
+          <div className="icon-boxes position-relative">
+            <div className="container position-relative">
+              <div className="row gy-4 mt-5 justify-content-center">
                 {latestTopiks.length === 0 ? (
                   <div className="col-12">
                     <p>Belum ada topik yang tersedia.</p>
@@ -135,23 +134,19 @@ function Home(props) {
                 ) : (
                   latestTopiks.map((topik) => (
                     <div
-                      class="col-xl-3 col-md-6"
+                      className="col-xl-3 col-md-6"
                       data-aos="fade-up"
                       data-aos-delay="100"
                       key={topik.id}
                     >
-                      <div class="icon-box">
-                        <div class="gambar_topik">
-                          <img
-                            src={topik.image}
-                            alt=""
-                            srcset=""
-                          />
+                      <div className="icon-box">
+                        <div className="gambar_topik">
+                          <img src={topik.image} alt={topik.name} />
                         </div>
-                        <h4 class="title">
+                        <h4 className="title">
                           <a
                             href={`/topik/materi/${topik.id}`}
-                            class="stretched-link"
+                            className="stretched-link"
                           >
                             {topik.name}
                           </a>
@@ -164,10 +159,7 @@ function Home(props) {
             </div>
           </div>
           <div className="text-center">
-            <Link
-              href="/topik"
-              className={`btn btn-custom mt-5 ${Styles.heroBtn}`}
-            >
+            <Link href="/topik" className={`btn btn-custom mt-5 ${Styles.heroBtn}`}>
               Lihat Topik Selengkapnya
             </Link>
           </div>

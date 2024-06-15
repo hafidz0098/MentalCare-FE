@@ -38,7 +38,7 @@ export async function getServerSideProps(context) {
       config
     );
 
-    const konsuls = req.data.data.data;
+    const konsuls = req.data?.data?.data || [];
 
     return {
       props: {
@@ -80,42 +80,42 @@ function getTokenFromRequest(req) {
 function Dashboard(props) {
   const router = useRouter();
 
-  //refresh data
+  // Refresh data
   const refreshData = () => {
     router.replace(router.asPath);
   };
 
-  //get token
+  // Get token
   const token = Cookies.get("token");
 
-  //state user
+  // State user
   const [user, setUser] = useState({});
 
-  //state isLoading
+  // State isLoading
   const [isLoading, setIsLoading] = useState(true);
 
-  //function "fetchData"
+  // Function "fetchData"
   const fetchData = async () => {
-    //set axios header dengan type Authorization + Bearer token
+    // Set axios header with type Authorization + Bearer token
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    //fetch user from Rest API
+    // Fetch user from Rest API
     await axios
       .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
       .then((response) => {
-        //set response user to state
+        // Set response user to state
         setUser(response.data);
         setIsLoading(false); // Set isLoading to false when data is fetched
       });
   };
 
   // Calculate total, answered, and pending consultations
-  const totalConsultations = props.konsuls.length;
-  const answeredConsultations = props.konsuls.filter(
+  const totalConsultations = props.konsuls?.length || 0;
+  const answeredConsultations = props.konsuls?.filter(
     (konsul) => konsul.status === "responded"
-  ).length;
-  const pendingConsultations = props.konsuls.filter(
+  ).length || 0;
+  const pendingConsultations = props.konsuls?.filter(
     (konsul) => konsul.status === "pending"
-  ).length;
+  ).length || 0;
 
   useEffect(() => {
     if (!token) {
@@ -182,7 +182,7 @@ function Dashboard(props) {
               <div className="col-md-4 col-xl-3">
                 {isLoading ? (
                   <div>
-                  <SkeletonLine />
+                    <SkeletonLine />
                   </div>
                 ) : (
                   <div className="card-dash bg-c-green order-card">
@@ -198,7 +198,7 @@ function Dashboard(props) {
               <div className="col-md-4 col-xl-3">
                 {isLoading ? (
                   <div>
-                  <SkeletonLine />
+                    <SkeletonLine />
                   </div>
                 ) : (
                   <div className="card-dash bg-c-green order-card">
