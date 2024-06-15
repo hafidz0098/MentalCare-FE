@@ -5,25 +5,22 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const token = Cookies.get("token");
+    return token ? JSON.parse(atob(token.split(".")[1])) : null;
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
       const token = Cookies.get("token");
-
-      // Check if the token exists
       if (token) {
-        // Set axios header with Authorization + Bearer token
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
         try {
-          // Fetch user data from the API
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`
+            `${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`,
+            { headers: { Authorization: `Bearer ${token}` } }
           );
           setUser(response.data);
         } catch (error) {
-          // Handle error fetching user data
           console.error("Error fetching user data:", error);
         }
       }
@@ -33,25 +30,8 @@ const Navbar = () => {
   }, []);
 
   const logoutHandler = async () => {
-    const token = Cookies.get("token");
-
-    // Check if the token exists
-    if (token) {
-      // Set axios header with Authorization + Bearer token
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      try {
-        // Fetch the logout endpoint
-        await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/logout`);
-        // Remove token from cookies
-        Cookies.remove("token");
-        // Redirect to the login page
-        Router.push("/login");
-      } catch (error) {
-        // Handle error
-        console.error("Logout error:", error);
-      }
-    }
+    Cookies.remove("token");
+    Router.push("/login");
   };
 
   return (
@@ -91,7 +71,6 @@ const Navbar = () => {
           </div>
         </div>
         {user ? (
-          // Jika user sudah login, tampilkan dropdown
           <div className="dropdown">
             <button
               className="btn btn-oren dropdown-toggle drop-btn"
@@ -107,17 +86,12 @@ const Navbar = () => {
                   Dashboard
                 </Link>
               </li>
-              <li
-                onClick={logoutHandler}
-                className="dropdown-item"
-                href="/logout"
-              >
+              <li className="dropdown-item" onClick={logoutHandler}>
                 Logout
               </li>
             </ul>
           </div>
         ) : (
-          // Jika user belum login, tampilkan tombol login
           <Link href="/login" className="btn btn-oren login-btn">
             Login
           </Link>
