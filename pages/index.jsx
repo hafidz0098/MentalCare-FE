@@ -31,7 +31,7 @@ export async function getServerSideProps() {
   }
 }
 
-function Home({ topiks, error }) {
+function Home({ topiks = [], error }) {
   const [loading, setLoading] = useState(true);
   const [latestTopiks, setLatestTopiks] = useState([]);
   const [fetchError, setFetchError] = useState("");
