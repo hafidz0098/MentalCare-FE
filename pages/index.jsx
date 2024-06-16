@@ -124,7 +124,9 @@ function Home({ topiks = [], error }) {
                   </div>
                 ) : latestTopiks.length === 0 ? (
                   <div className="col-12">
-                    <p>Belum ada topik yang tersedia.</p>
+                    <SkeletonLine />
+                    <SkeletonLine />
+                    <SkeletonLine />
                   </div>
                 ) : (
                   latestTopiks.map((topik) => (
