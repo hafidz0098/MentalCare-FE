@@ -5,12 +5,12 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const Navbar = () => {
-  const [user, setUser] = useState(() => {
-    const token = Cookies.get("token");
-    return token ? JSON.parse(atob(token.split(".")[1])) : null;
-  });
+  const [user, setUser] = useState(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+
     const fetchUser = async () => {
       const token = Cookies.get("token");
       if (token) {
@@ -33,6 +33,10 @@ const Navbar = () => {
     Cookies.remove("token");
     Router.push("/login");
   };
+
+  if (!isClient) {
+    return null; // atau spinner/loading state
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark fixed-top">
