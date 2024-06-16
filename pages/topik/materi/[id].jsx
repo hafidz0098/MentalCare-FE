@@ -95,7 +95,7 @@ function PostIndex({ posts, topikTitle }) {
               posts.map((postItem) => (
                 <div className="col-lg-3 d-flex align-items-stretch justify-content-center" key={postItem.post.id}>
                   <div className="card">
-                    <img className="card-image-artikel" src={postItem.post.image} alt="..." />
+                    <img className="card-img-top" src={postItem.post.image} alt="..." />
                     <div className="card-body">
                       <h5 className="card-title">{postItem.post.title}</h5>
                       <p className={`mt-3 badge ${postItem.user_progress && postItem.user_progress.status === 'Finished' ? 'badge-finished' : 'badge-not-finished'}`}>
