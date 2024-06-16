@@ -11,6 +11,10 @@ body{
     font-family: 'Poppins', sans-serif !important;
 }
 
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  color: black;
+}
+
 .navbar{
     background-color: #182231;
     padding: 15px;
