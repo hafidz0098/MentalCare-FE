@@ -1,42 +1,44 @@
 import { NextResponse } from "next/server";
+import Cookies from "js-cookie"; // Import js-cookie
 import jwtDecode from "jwt-decode";
 
-export function middleware(request) {
-  const token = request.cookies.get("token")?.value;
-  const decodedToken = token && jwtDecode(token);
+export function middleware(req) {
+  const cookie = req.cookies.get("token")?.value;
+  const decodedToken = cookie ? jwtDecode(cookie) : null;
   const currentTime = Math.floor(Date.now() / 1000);
 
-  const restrictedPaths = new Set([
-    "/dashboard",
-    "/admin",
-    "/konsultasi",
-    "/topik",
-    "/materi",
-  ]);
-
-  if (restrictedPaths.has(request.nextUrl.pathname.split("/")[1])) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+  if (
+    req.nextUrl.pathname.startsWith("/dashboard") ||
+    req.nextUrl.pathname.startsWith("/admin") ||
+    req.nextUrl.pathname.startsWith("/konsultasi") ||
+    req.nextUrl.pathname.startsWith("/topik") ||
+    req.nextUrl.pathname.startsWith("/materi")
+  ) {
+    if (!cookie) {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    if (decodedToken?.exp < currentTime) {
-      request.cookies.delete("token");
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (decodedToken.exp < currentTime) {
+      // Token has expired, perform logout and redirect to login
+      Cookies.remove("token"); // Remove token from cookies
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    const userRole = decodedToken?.role;
-    const restrictedPages = {
-      admin: new Set(["/user", "/psikolog"]),
-      user: new Set(["/admin", "/psikolog"]),
-      psikolog: new Set(["/admin", "/user"]),
-    };
-
-    const restrictedPage = restrictedPages[userRole];
+    // Restrict access based on role
+    const userRole = decodedToken.role;
     if (
-      restrictedPage &&
-      restrictedPage.has(request.nextUrl.pathname.split("/")[2])
+      (userRole === "admin" &&
+        (req.nextUrl.pathname.startsWith("/dashboard/user") ||
+          req.nextUrl.pathname.startsWith("/dashboard/psikolog"))) ||
+      (userRole === "user" &&
+        (req.nextUrl.pathname.startsWith("/dashboard/admin") ||
+          req.nextUrl.pathname.startsWith("/dashboard/psikolog"))) ||
+      (userRole === "psikolog" &&
+        (req.nextUrl.pathname.startsWith("/dashboard/admin") ||
+          req.nextUrl.pathname.startsWith("/dashboard/user")))
     ) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      // Redirect to a general dashboard or an appropriate page
+      return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 
