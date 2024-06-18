@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import Cookies from "js-cookie"; // Import js-cookie
 import jwtDecode from "jwt-decode";
 
 export function middleware(req) {
@@ -7,20 +6,28 @@ export function middleware(req) {
   const decodedToken = cookie ? jwtDecode(cookie) : null;
   const currentTime = Math.floor(Date.now() / 1000);
 
-  if (
-    req.nextUrl.pathname.startsWith("/dashboard") ||
-    req.nextUrl.pathname.startsWith("/admin") ||
-    req.nextUrl.pathname.startsWith("/konsultasi") ||
-    req.nextUrl.pathname.startsWith("/topik") ||
-    req.nextUrl.pathname.startsWith("/materi")
-  ) {
+  // List of protected paths
+  const protectedPaths = [
+    "/dashboard",
+    "/admin",
+    "/konsultasi",
+    "/topik",
+    "/materi",
+  ];
+
+  // Check if the request path is protected
+  const isProtectedPath = protectedPaths.some((path) =>
+    req.nextUrl.pathname.startsWith(path)
+  );
+
+  if (isProtectedPath) {
+    // If no cookie is found, redirect to login
     if (!cookie) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
+    // If token is expired, redirect to login
     if (decodedToken.exp < currentTime) {
-      // Token has expired, perform logout and redirect to login
-      Cookies.remove("token"); // Remove token from cookies
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
