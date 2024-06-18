@@ -3,29 +3,20 @@ import Link from "next/link";
 import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = () => {
       const token = Cookies.get("token");
 
       // Check if the token exists
       if (token) {
-        // Set axios header with Authorization + Bearer token
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-        try {
-          // Fetch user data from the API
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`
-          );
-          setUser(response.data);
-        } catch (error) {
-          // Handle error fetching user data
-          console.error("Error fetching user data:", error);
-        }
+        // Decode the token to get user data
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken);
       }
     };
 
