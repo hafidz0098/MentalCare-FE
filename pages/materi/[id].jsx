@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import Swal from 'sweetalert2';
 import { format } from "date-fns";
 import Link from 'next/link';
+import jwtDecode from 'jwt-decode';
+import Cookies from 'js-cookie';
 
 export async function getServerSideProps({ params }) {
     const postreq = await axios.get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/posts/${params.id}`);
@@ -27,7 +29,6 @@ export async function getServerSideProps({ params }) {
 function Post(props) {
     const { post, quiz } = props;
     const [showPlayer, setShowPlayer] = useState(false);
-    // const [quizAnswer, setQuizAnswer] = useState('');
     const router = useRouter();
     const { id } = router.query;
 
@@ -68,12 +69,27 @@ function Post(props) {
                     // Mendapatkan quiz_id dari data kuis
                     const quizId = quiz[0].id;
                     const postId = post.id;
-    
+
+                    // Get the user ID from the token in cookies
+                    const token = Cookies.get("token"); // Assumes you store the JWT in cookies under the key 'token'
+                    if (!token) {
+                        Swal.showValidationMessage('User not authenticated');
+                        return;
+                    }
+                    
+                    const decodedToken = jwtDecode(token);
+                    const userId = decodedToken.sub; // Change this according to your token structure
+                    if (!userId) {
+                        Swal.showValidationMessage('Invalid token');
+                        return;
+                    }
+
                     // Melakukan panggilan API untuk mengirim jawaban kuis
                     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/attemptquiz`, {
                         quiz_id: quizId,
                         user_answer: answer,
-                        post_id: postId
+                        post_id: postId,
+                        user_id: userId // Send the user ID with the request
                     });
     
                     return response.data; // Mengembalikan respons dari panggilan API
