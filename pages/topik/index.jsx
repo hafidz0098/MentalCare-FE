@@ -11,14 +11,14 @@ export async function getServerSideProps(context) {
   try {
     const token = getTokenFromRequest(context.req);
 
-    if (!token) {
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false,
-        },
-      };
-    }
+    // if (!token) {
+    //   return {
+    //     redirect: {
+    //       destination: "/login",
+    //       permanent: false,
+    //     },
+    //   };
+    // }
 
     // Set the authorization header
     const config = {
