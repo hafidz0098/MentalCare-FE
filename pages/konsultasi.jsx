@@ -5,7 +5,6 @@ import Router from "next/router";
 import axios from "axios";
 import Head from "next/head";
 import Swal from "sweetalert2";
-import jwtDecode from "jwt-decode";
 
 function Konsultasi() {
   const [name, setName] = useState("");
@@ -28,7 +27,7 @@ function Konsultasi() {
     formData.append("name", name);
     formData.append("message", message);
 
-    // Send data to server
+    //send data to server
     await axios
       .post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/konsultasi`, formData)
       .then((response) => {
@@ -41,36 +40,31 @@ function Konsultasi() {
         setName("");
         setMessage("");
 
-        // Redirect to home
+        //redirect to home
         Router.push("/konsultasi");
       })
       .catch((error) => {
         setValidation(error.response.data);
       });
   };
-
   const token = Cookies.get("token");
   const [user, setUser] = useState({});
+
+  const fetchData = async () => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    await axios
+      .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
+      .then((response) => {
+        setUser(response.data);
+      });
+  };
 
   useEffect(() => {
     if (!token) {
       Router.push("/login");
-    } else {
-      try {
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-      } catch (error) {
-        console.error("Failed to decode token:", error);
-        Router.push("/login");
-      }
     }
-  }, [token]);
-
-  useEffect(() => {
-    if (user.name) {
-      setName(user.name);
-    }
-  }, [user]);
+    fetchData();
+  }, []);
 
   return (
     <Layout>
