@@ -10,8 +10,7 @@ const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>
 export async function getServerSideProps() {
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/topiks`,
-      { timeout: 5000 } // 5 seconds timeout
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/topiks`
     );
     const topiks = response.data?.data?.data || [];
 
