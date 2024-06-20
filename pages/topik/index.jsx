@@ -3,15 +3,27 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Styles from "../../styles/artikel.module.css";
+import jwtDecode from "jwt-decode";
 
 // Skeleton line component
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
 
 export async function getServerSideProps(context) {
   try {
-    const token = getTokenFromRequest(context.req);
+    const token = getTokenFromCookies(context.req);
 
     if (!token) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    // Decode the token to ensure it's valid
+    const decodedToken = jwtDecode(token);
+    if (!decodedToken) {
       return {
         redirect: {
           destination: "/login",
@@ -50,8 +62,8 @@ export async function getServerSideProps(context) {
   }
 }
 
-// Function to extract token from the request
-function getTokenFromRequest(req) {
+// Function to extract token from cookies
+function getTokenFromCookies(req) {
   // Check if the request contains cookies
   if (req.headers.cookie) {
     // Extract cookies from the request headers
@@ -104,9 +116,9 @@ function TopikIndex(props) {
               ))}
             </div>
           ) : (
-            <div class="icon-boxes position-relative">
-              <div class="container position-relative">
-                <div class="row gy-4 mt-5 mb-5">
+            <div className="icon-boxes position-relative">
+              <div className="container position-relative">
+                <div className="row gy-4 mt-5 mb-5">
                   {topiks.length === 0 ? (
                     <div className="col-12">
                       <p>Belum ada topik yang tersedia.</p>
@@ -114,23 +126,23 @@ function TopikIndex(props) {
                   ) : (
                     topiks.map((topik) => (
                       <div
-                        class="col-xl-3 col-md-6"
+                        className="col-xl-3 col-md-6"
                         data-aos="fade-up"
                         data-aos-delay="100"
                         key={topik.id}
                       >
-                        <div class="icon-box">
-                          <div class="gambar_topik">
+                        <div className="icon-box">
+                          <div className="gambar_topik">
                             <img
                               src={topik.image}
                               alt=""
-                              srcset=""
+                              srcSet=""
                             />
                           </div>
-                          <h4 class="title">
+                          <h4 className="title">
                             <a
                               href={`/topik/materi/${topik.id}`}
-                              class="stretched-link"
+                              className="stretched-link"
                             >
                               {topik.name}
                             </a>

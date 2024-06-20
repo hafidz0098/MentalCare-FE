@@ -9,55 +9,39 @@ import Link from "next/link";
 import { Button } from "primereact/button";
 
 function Login() {
-  //define state
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [validation, setValidation] = useState({});
 
-  //define state validation
-  const [validation, setValidation] = useState([]);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  //function "loginHanlder"
   const loginHandler = async (e) => {
     e.preventDefault();
 
     // Check if any of the fields is empty
-    if (!email || !password) {
+    if (!formData.email || !formData.password) {
       Swal.fire("Oops!", "Silakan isi semua field sebelum login.", "error");
-      return; // Stop the function if any field is empty
+      return;
     }
 
-    //initialize formData
-    const formData = new FormData();
-
-    //append data to formData
-    formData.append("email", email);
-    formData.append("password", password);
-
-    //send data to server
-    await axios
-      .post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/login`, formData)
-      .then((response) => {
-        //set token on cookies
-        Cookies.set("token", response.data.token);
-        //redirect to dashboard
-        Router.push("/");
-        refreshData();
-      })
-      .catch((error) => {
-        //assign error to state "validation"
-        setValidation(error.response.data);
-      });
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BACKEND}/api/login`,
+        formData
+      );
+      Cookies.set("token", response.data.token);
+      Router.push("/");
+    } catch (error) {
+      setValidation(error.response.data);
+    }
   };
 
-  const refreshData = () => {
-    Router.replace(Router.asPath);
-  };
-
-  //hook useEffect
   useEffect(() => {
-    //check token
     if (Cookies.get("token")) {
-      //redirect page dashboard
       Router.push("/dashboard");
     }
   }, []);
@@ -70,7 +54,7 @@ function Login() {
       <div className="section-login">
         <div className="container">
           <div className="row justify-content-center">
-            <div className="mx-auto col-10 col-md-8 col-lg-6mx-auto col-10 col-md-8 col-lg-6">
+            <div className="mx-auto col-10 col-md-8 col-lg-6">
               <div className="card border-0 rounded shadow-sm">
                 <div className="card-body">
                   <h4 className="fw-bold">Login</h4>
@@ -86,31 +70,33 @@ function Login() {
                       <input
                         type="email"
                         className="form-control"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
                         placeholder="Masukkan Alamat Email"
                       />
+                      {validation.email && (
+                        <div className="alert alert-danger">
+                          {validation.email[0]}
+                        </div>
+                      )}
                     </div>
-                    {validation.email && (
-                      <div className="alert alert-danger">
-                        {validation.email[0]}
-                      </div>
-                    )}
                     <div className="mb-3">
                       <label className="form-label">Password</label>
                       <input
                         type="password"
                         className="form-control"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
                         placeholder="Masukkan Password"
                       />
+                      {validation.password && (
+                        <div className="alert alert-danger">
+                          {validation.password[0]}
+                        </div>
+                      )}
                     </div>
-                    {validation.password && (
-                      <div className="alert alert-danger">
-                        {validation.password[0]}
-                      </div>
-                    )}
                     <div className="d-grid gap-2">
                       <Button
                         label="Login"
