@@ -41,11 +41,16 @@ function Login() {
         Cookies.set("token", response.data.token);
         //redirect to dashboard
         Router.push("/");
+        refreshData();
       })
       .catch((error) => {
         //assign error to state "validation"
         setValidation(error.response.data);
       });
+  };
+
+  const refreshData = () => {
+    Router.replace(Router.asPath);
   };
 
   //hook useEffect
