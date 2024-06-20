@@ -6,6 +6,45 @@ import axios from "axios";
 import Head from "next/head";
 import Swal from "sweetalert2";
 
+export async function getServerSideProps(context) {
+    const token = getTokenFromRequest(context.req);
+
+    if (!token) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {}, // You can optionally pass some props here if needed
+    };
+}
+
+// Function to extract token from the request
+function getTokenFromRequest(req) {
+  // Check if the request contains cookies
+  if (req.headers.cookie) {
+    // Extract cookies from the request headers
+    const cookies = req.headers.cookie
+      .split(";")
+      .map((cookie) => cookie.trim());
+
+    // Find the cookie containing the token
+    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+
+    // If token cookie is found, extract and return the token
+    if (tokenCookie) {
+      return tokenCookie.split("=")[1];
+    }
+  }
+
+  // If token is not found, return null
+  return null;
+}
+
 function Konsultasi() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
@@ -23,13 +62,21 @@ function Konsultasi() {
       return;
     }
 
+    const token = Cookies.get("token");
+    
+    // Set the authorization header
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     const formData = new FormData();
     formData.append("name", name);
     formData.append("message", message);
 
     //send data to server
     await axios
-      .post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/konsultasi`, formData)
+      .post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/konsultasi`, formData, config)
       .then((response) => {
         Swal.fire(
           "Good job!",
@@ -47,24 +94,6 @@ function Konsultasi() {
         setValidation(error.response.data);
       });
   };
-  const token = Cookies.get("token");
-  const [user, setUser] = useState({});
-
-  const fetchData = async () => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
-      .then((response) => {
-        setUser(response.data);
-      });
-  };
-
-  useEffect(() => {
-    if (!token) {
-      Router.push("/login");
-    }
-    fetchData();
-  }, []);
 
   return (
     <Layout>
