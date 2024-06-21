@@ -7,6 +7,8 @@ export function middleware(req) {
   const decodedToken = cookie ? jwtDecode(cookie) : null;
   const currentTime = Math.floor(Date.now() / 1000);
 
+  let response;
+
   if (
     req.nextUrl.pathname.startsWith("/dashboard") ||
     req.nextUrl.pathname.startsWith("/admin") ||
@@ -15,13 +17,17 @@ export function middleware(req) {
     req.nextUrl.pathname.startsWith("/materi")
   ) {
     if (!cookie) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      response = NextResponse.redirect(new URL("/login", req.url));
+      response.headers.set('ngrok-skip-browser-warning', 'true');
+      return response;
     }
 
     if (decodedToken.exp < currentTime) {
       // Token has expired, perform logout and redirect to login
       Cookies.remove("token"); // Remove token from cookies
-      return NextResponse.redirect(new URL("/login", req.url));
+      response = NextResponse.redirect(new URL("/login", req.url));
+      response.headers.set('ngrok-skip-browser-warning', 'true');
+      return response;
     }
 
     // Restrict access based on role
@@ -38,9 +44,17 @@ export function middleware(req) {
           req.nextUrl.pathname.startsWith("/dashboard/user")))
     ) {
       // Redirect to a general dashboard or an appropriate page
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      response = NextResponse.redirect(new URL("/dashboard", req.url));
+      response.headers.set('ngrok-skip-browser-warning', 'true');
+      return response;
     }
   }
 
-  return NextResponse.next();
+  response = NextResponse.next();
+  response.headers.set('ngrok-skip-browser-warning', 'true');
+  return response;
 }
+
+export const config = {
+  matcher: "/:path*", // Apply middleware to all routes
+};
