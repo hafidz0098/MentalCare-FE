@@ -3,7 +3,6 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Styles from "../../styles/artikel.module.css";
-import useAuth from "../../hooks/useAuth";
 
 // Skeleton line component
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
@@ -53,36 +52,39 @@ export async function getServerSideProps(context) {
 
 // Function to extract token from the request
 function getTokenFromRequest(req) {
+  // Check if the request contains cookies
   if (req.headers.cookie) {
+    // Extract cookies from the request headers
     const cookies = req.headers.cookie
       .split(";")
       .map((cookie) => cookie.trim());
 
+    // Find the cookie containing the token
     const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
 
+    // If token cookie is found, extract and return the token
     if (tokenCookie) {
       return tokenCookie.split("=")[1];
     }
   }
 
+  // If token is not found, return null
   return null;
 }
 
-function TopikIndex({ topiks }) {
-  const { isAuthenticated, loading } = useAuth();
+function TopikIndex(props) {
+  const { topiks } = props;
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("/login");
-    } else {
+    // Atur timeout untuk menunjukkan indikator loading selama 2 detik (misalnya)
+    const timeout = setTimeout(() => {
       setIsLoading(false);
-    }
-  }, [isAuthenticated, loading]);
+    }, 1500);
 
-  if (loading || isLoading) {
-    return <div>Loading...</div>;
-  }
+    // Bersihkan timeout jika komponen di-unmount sebelum timeout selesai
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <Layout>
@@ -92,7 +94,7 @@ function TopikIndex({ topiks }) {
       <div className={`mt-70 ${Styles.artikel}`}>
         <div className="container">
           <div className="title-section-topik mb-3">Topik Kesehatan Mental</div>
-          {isLoading ? ( 
+          {isLoading ? ( // Tampilkan indikator loading jika status loading true
             <div className="row gy-4 mt-5 mb-5">
               {[...Array(4)].map((_, index) => (
                 <div className="col-xl-3 col-md-6" key={index}>
@@ -102,9 +104,9 @@ function TopikIndex({ topiks }) {
               ))}
             </div>
           ) : (
-            <div className="icon-boxes position-relative">
-              <div className="container position-relative">
-                <div className="row gy-4 mt-5 mb-5">
+            <div class="icon-boxes position-relative">
+              <div class="container position-relative">
+                <div class="row gy-4 mt-5 mb-5">
                   {topiks.length === 0 ? (
                     <div className="col-12">
                       <p>Belum ada topik yang tersedia.</p>
@@ -112,23 +114,23 @@ function TopikIndex({ topiks }) {
                   ) : (
                     topiks.map((topik) => (
                       <div
-                        className="col-xl-3 col-md-6"
+                        class="col-xl-3 col-md-6"
                         data-aos="fade-up"
                         data-aos-delay="100"
                         key={topik.id}
                       >
-                        <div className="icon-box">
-                          <div className="gambar_topik">
+                        <div class="icon-box">
+                          <div class="gambar_topik">
                             <img
                               src={topik.image}
-                              alt={topik.name}
-                              srcSet=""
+                              alt=""
+                              srcset=""
                             />
                           </div>
-                          <h4 className="title">
+                          <h4 class="title">
                             <a
                               href={`/topik/materi/${topik.id}`}
-                              className="stretched-link"
+                              class="stretched-link"
                             >
                               {topik.name}
                             </a>
