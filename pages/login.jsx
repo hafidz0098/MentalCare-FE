@@ -8,6 +8,45 @@ import Swal from "sweetalert2";
 import Link from "next/link";
 import { Button } from "primereact/button";
 
+export async function getServerSideProps(context) {
+  const token = getTokenFromRequest(context.req);
+
+  if (token) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}, // You can optionally pass some props here if needed
+  };
+}
+
+// Function to extract token from the request
+function getTokenFromRequest(req) {
+// Check if the request contains cookies
+if (req.headers.cookie) {
+  // Extract cookies from the request headers
+  const cookies = req.headers.cookie
+    .split(";")
+    .map((cookie) => cookie.trim());
+
+  // Find the cookie containing the token
+  const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+
+  // If token cookie is found, extract and return the token
+  if (tokenCookie) {
+    return tokenCookie.split("=")[1];
+  }
+}
+
+// If token is not found, return null
+return null;
+}
+
 function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -39,12 +78,6 @@ function Login() {
       setValidation(error.response.data);
     }
   };
-
-  useEffect(() => {
-    if (Cookies.get("token")) {
-      Router.push("/dashboard");
-    }
-  }, []);
 
   return (
     <Layout>
