@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Styles from "../../styles/artikel.module.css";
+import useAuth from "../../hooks/useAuth";
 
 // Skeleton line component
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
@@ -52,39 +53,36 @@ export async function getServerSideProps(context) {
 
 // Function to extract token from the request
 function getTokenFromRequest(req) {
-  // Check if the request contains cookies
   if (req.headers.cookie) {
-    // Extract cookies from the request headers
     const cookies = req.headers.cookie
       .split(";")
       .map((cookie) => cookie.trim());
 
-    // Find the cookie containing the token
     const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
 
-    // If token cookie is found, extract and return the token
     if (tokenCookie) {
       return tokenCookie.split("=")[1];
     }
   }
 
-  // If token is not found, return null
   return null;
 }
 
-function TopikIndex(props) {
-  const { topiks } = props;
+function TopikIndex({ topiks }) {
+  const { isAuthenticated, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Atur timeout untuk menunjukkan indikator loading selama 2 detik (misalnya)
-    const timeout = setTimeout(() => {
+    if (!loading && !isAuthenticated) {
+      router.push("/login");
+    } else {
       setIsLoading(false);
-    }, 1500);
+    }
+  }, [isAuthenticated, loading]);
 
-    // Bersihkan timeout jika komponen di-unmount sebelum timeout selesai
-    return () => clearTimeout(timeout);
-  }, []);
+  if (loading || isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Layout>
@@ -94,7 +92,7 @@ function TopikIndex(props) {
       <div className={`mt-70 ${Styles.artikel}`}>
         <div className="container">
           <div className="title-section-topik mb-3">Topik Kesehatan Mental</div>
-          {isLoading ? ( // Tampilkan indikator loading jika status loading true
+          {isLoading ? ( 
             <div className="row gy-4 mt-5 mb-5">
               {[...Array(4)].map((_, index) => (
                 <div className="col-xl-3 col-md-6" key={index}>
@@ -104,9 +102,9 @@ function TopikIndex(props) {
               ))}
             </div>
           ) : (
-            <div class="icon-boxes position-relative">
-              <div class="container position-relative">
-                <div class="row gy-4 mt-5 mb-5">
+            <div className="icon-boxes position-relative">
+              <div className="container position-relative">
+                <div className="row gy-4 mt-5 mb-5">
                   {topiks.length === 0 ? (
                     <div className="col-12">
                       <p>Belum ada topik yang tersedia.</p>
@@ -114,23 +112,23 @@ function TopikIndex(props) {
                   ) : (
                     topiks.map((topik) => (
                       <div
-                        class="col-xl-3 col-md-6"
+                        className="col-xl-3 col-md-6"
                         data-aos="fade-up"
                         data-aos-delay="100"
                         key={topik.id}
                       >
-                        <div class="icon-box">
-                          <div class="gambar_topik">
+                        <div className="icon-box">
+                          <div className="gambar_topik">
                             <img
                               src={topik.image}
-                              alt=""
-                              srcset=""
+                              alt={topik.name}
+                              srcSet=""
                             />
                           </div>
-                          <h4 class="title">
+                          <h4 className="title">
                             <a
                               href={`/topik/materi/${topik.id}`}
-                              class="stretched-link"
+                              className="stretched-link"
                             >
                               {topik.name}
                             </a>
