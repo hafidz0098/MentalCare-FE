@@ -77,13 +77,8 @@ function TopikIndex(props) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Atur timeout untuk menunjukkan indikator loading selama 2 detik (misalnya)
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    // Bersihkan timeout jika komponen di-unmount sebelum timeout selesai
-    return () => clearTimeout(timeout);
+    // Set loading to false immediately since data is already fetched
+    setIsLoading(false);
   }, []);
 
   return (
