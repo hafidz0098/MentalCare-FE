@@ -8,7 +8,15 @@ import jwtDecode from "jwt-decode";
 const Navbar = () => {
   const [user, setUser] = useState(() => {
     const token = Cookies.get("token");
-    return token ? jwtDecode(token) : null;
+    if (token) {
+      try {
+        return jwtDecode(token);
+      } catch (error) {
+        console.error("Token decode error:", error);
+        return null;
+      }
+    }
+    return null;
   });
 
   const logoutHandler = async () => {
@@ -81,15 +89,15 @@ const Navbar = () => {
               <li
                 onClick={logoutHandler}
                 className="dropdown-item"
-                href="/logout"
+                role="button"
               >
                 Logout
               </li>
             </ul>
           </div>
         ) : (
-          <Link href="/login" className="btn btn-oren login-btn">
-            Login
+          <Link href="/login" legacyBehavior>
+            <a className="btn btn-oren login-btn">Login</a>
           </Link>
         )}
       </div>
