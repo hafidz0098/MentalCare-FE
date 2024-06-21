@@ -6,6 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Sidebar from "../../components/sidebar";
+import jwtDecode from "jwt-decode"; // Import jwt-decode to decode the token
 
 // Skeleton line component
 const SkeletonLine = () => (
@@ -37,38 +38,26 @@ export async function getServerSideProps() {
 function Dashboard(props) {
   const router = useRouter();
 
-  //refresh data
+  // Refresh data
   const refreshData = () => {
     router.replace(router.asPath);
   };
 
-  //get token
+  // Get token
   const token = Cookies.get("token");
 
-  //state user
-  const [user, setUser] = useState({});
+  // Decode the user info from the token
+  let user = {};
+  if (token) {
+    try {
+      user = jwtDecode(token);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
+  }
 
-  //state isLoading
+  // State isLoading
   const [isLoading, setIsLoading] = useState(true);
-
-  //function "fetchData"
-  const fetchData = async () => {
-    setIsLoading(true); // Set isLoading to true when fetching data
-    //set axios header dengan type Authorization + Bearer token
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    //fetch user from Rest API
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
-      .then((response) => {
-        //set response user to state
-        setUser(response.data);
-        setIsLoading(false); // Set isLoading to false when data is fetched
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        setIsLoading(false); // Set isLoading to false on error as well
-      });
-  };
 
   // Calculate total, answered, and pending consultations
   const totalConsultations = props.konsuls ? props.konsuls.length : 0;
@@ -80,30 +69,34 @@ function Dashboard(props) {
     : 0;
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false); // Set isLoading to false after 2 seconds
+    }, 2000);
+
+    return () => clearTimeout(timer); // Clean up timer on component unmount
+  }, []); // No dependencies, runs once on mount
+
+  useEffect(() => {
     if (!token) {
       Router.push("/login");
     } else {
-      fetchData();
-    }
+      const el = document.getElementById("wrapper");
+      const toggleButton = document.getElementById("menu-toggle");
 
-    const el = document.getElementById("wrapper");
-    const toggleButton = document.getElementById("menu-toggle");
+      toggleButton.onclick = function () {
+        el.classList.toggle("toggled");
+      };
 
-    toggleButton.onclick = function () {
-      el.classList.toggle("toggled");
-    };
-
-    // Check user role and redirect if it's admin
-    if (user.role === "admin") {
-      router.push("/dashboard/admin");
+      // Check user role and redirect if it's admin
+      if (user.role === "admin") {
+        router.push("/dashboard/admin");
+      } else if (user.role === "user") {
+        router.push("/dashboard/user");
+      } else if (user.role === "psikolog") {
+        router.push("/dashboard/psikolog");
+      }
     }
-    if (user.role === "user") {
-      router.push("/dashboard/user");
-    }
-    if (user.role === "psikolog") {
-      router.push("/dashboard/psikolog");
-    }
-  }, [token, user]); // Add user as dependency for useEffect
+  }, [token, user, router]); // Add router as dependency for useEffect
 
   return (
     <Layout>
@@ -132,7 +125,7 @@ function Dashboard(props) {
                     <div className="card-block">
                       <h6 className="m-b-20">Total Konsultasi</h6>
                       <h2 className="text-right">
-                        <span>{totalConsultations}</span>
+                        <span>0</span>
                       </h2>
                     </div>
                   </div>
@@ -147,7 +140,7 @@ function Dashboard(props) {
                     <div className="card-block">
                       <h6 className="m-b-20">Konsultasi Pending</h6>
                       <h2 className="text-right">
-                        <span>{pendingConsultations}</span>
+                        <span>0</span>
                       </h2>
                     </div>
                   </div>
@@ -156,15 +149,13 @@ function Dashboard(props) {
 
               <div className="col-md-4 col-xl-3">
                 {isLoading ? (
-                  <div>
                   <SkeletonLine />
-                  </div>
                 ) : (
                   <div className="card-dash bg-c-green order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Konsultasi Terjawab</h6>
                       <h2 className="text-right">
-                        <span>{answeredConsultations}</span>
+                        <span>0</span>
                       </h2>
                     </div>
                   </div>

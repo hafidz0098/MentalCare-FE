@@ -5,7 +5,8 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Sidebar from "../../../components/sidebarUser";
+import Sidebar from "../../../components/sidebar";
+import jwtDecode from "jwt-decode"; // Import jwt-decode to decode the token
 
 // Skeleton line component
 const SkeletonLine = () => (
@@ -33,16 +34,23 @@ export async function getServerSideProps(context) {
     };
 
     // Fetch data using the token
-    const req = await axios.get(
+    const reqKonsul = await axios.get(
       `${process.env.NEXT_PUBLIC_API_BACKEND}/api/konsulbyuser`,
       config
     );
 
-    const konsuls = req.data?.data?.data || [];
+    const reqQuiz = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/riwayatquiz`,
+      config
+    );
+
+    const konsuls = reqKonsul.data?.data?.data || [];
+    const quizs = reqQuiz.data?.data?.data || [];
 
     return {
       props: {
         konsuls,
+        quizs,
       },
     };
   } catch (error) {
@@ -50,6 +58,7 @@ export async function getServerSideProps(context) {
     return {
       props: {
         konsuls: [],
+        quizs: [],
       },
     };
   }
@@ -80,33 +89,21 @@ function getTokenFromRequest(req) {
 function Dashboard(props) {
   const router = useRouter();
 
-  // Refresh data
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
-
   // Get token
   const token = Cookies.get("token");
 
-  // State user
-  const [user, setUser] = useState({});
+  // Decode the user info from the token
+  let user = {};
+  if (token) {
+    try {
+      user = jwtDecode(token);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
+  }
 
   // State isLoading
   const [isLoading, setIsLoading] = useState(true);
-
-  // Function "fetchData"
-  const fetchData = async () => {
-    // Set axios header with type Authorization + Bearer token
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    // Fetch user from Rest API
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
-      .then((response) => {
-        // Set response user to state
-        setUser(response.data);
-        setIsLoading(false); // Set isLoading to false when data is fetched
-      });
-  };
 
   // Calculate total, answered, and pending consultations
   const totalConsultations = props.konsuls?.length || 0;
@@ -116,19 +113,24 @@ function Dashboard(props) {
   const pendingConsultations = props.konsuls?.filter(
     (konsul) => konsul.status === "pending"
   ).length || 0;
+  const totalQuiz = props.quizs?.filter(
+    (quiz) => quiz.status === "Lulus"
+  ).length || 0;
 
   useEffect(() => {
     if (!token) {
       Router.push("/login");
-    }
-    fetchData();
-    const el = document.getElementById("wrapper");
-    const toggleButton = document.getElementById("menu-toggle");
+    } else {
+      setIsLoading(false); // Set isLoading to false as we are not fetching user data
 
-    toggleButton.onclick = function () {
-      el.classList.toggle("toggled");
-    };
-  }, []);
+      const el = document.getElementById("wrapper");
+      const toggleButton = document.getElementById("menu-toggle");
+
+      toggleButton.onclick = function () {
+        el.classList.toggle("toggled");
+      };
+    }
+  }, [token]);
 
   return (
     <Layout>
@@ -181,9 +183,7 @@ function Dashboard(props) {
 
               <div className="col-md-4 col-xl-3">
                 {isLoading ? (
-                  <div>
-                    <SkeletonLine />
-                  </div>
+                  <SkeletonLine />
                 ) : (
                   <div className="card-dash bg-c-green order-card">
                     <div className="card-block">
@@ -197,15 +197,13 @@ function Dashboard(props) {
               </div>
               <div className="col-md-4 col-xl-3">
                 {isLoading ? (
-                  <div>
-                    <SkeletonLine />
-                  </div>
+                  <SkeletonLine />
                 ) : (
                   <div className="card-dash bg-c-green order-card">
                     <div className="card-block">
-                      <h6 className="m-b-20">Kuis Sudah Dikerjakan</h6>
+                      <h6 className="m-b-20">Kuis Terselesaikan</h6>
                       <h2 className="text-right">
-                        <span>{answeredConsultations}</span>
+                        <span>{totalQuiz}</span>
                       </h2>
                     </div>
                   </div>

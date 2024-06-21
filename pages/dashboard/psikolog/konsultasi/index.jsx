@@ -6,8 +6,7 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Swal from "sweetalert2";
-import Sidebar from "../../../../components/sidebarPsikolog";
+import Sidebar from "../../../../components/sidebar";
 import { format } from "date-fns";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -133,7 +132,15 @@ function ShowKonsuls(props) {
                         </span>
                       )}
                     ></Column>
-                    <Column field="status" header="Status"></Column>
+                     <Column
+                        field="status"
+                        header="Status"
+                        body={(rowData) => (
+                          <span className={rowData.status === 'pending' ? 'badge badge-pending' : 'badge badge-finished'}>
+                            {rowData.status}
+                          </span>
+                        )}
+                      />
                     <Column
                       field="updated_at"
                       header="Waktu Konsultasi"

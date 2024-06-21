@@ -5,13 +5,14 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Sidebar from "../../../../components/sidebarUser";
+import Sidebar from "../../../../components/sidebar";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { format } from "date-fns";
+import jwtDecode from "jwt-decode"; // Import jwt-decode to decode the token
 
 // Skeleton line component
 const SkeletonLine = () => (
@@ -44,9 +45,8 @@ export async function getServerSideProps(context) {
       config
     );
 
-    console.log(req);
     const riwayat = req.data.data.data;
-    
+
     return {
       props: {
         riwayat,
@@ -88,48 +88,41 @@ function ShowRiwayat(props) {
   const { riwayat } = props;
   const router = useRouter();
 
-  //refresh data
+  // Get token
+  const token = Cookies.get("token");
+
+  // Decode the user info from the token
+  let user = {};
+  if (token) {
+    try {
+      user = jwtDecode(token);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
+  }
+
+  // State isLoading
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Refresh data
   const refreshData = () => {
     router.replace(router.asPath);
   };
 
-  //get token
-  const token = Cookies.get("token");
-  //state user
-  const [user, setUser] = useState({});
-  //state isLoading
-  const [isLoading, setIsLoading] = useState(true);
-
-  //function "fetchData"
-  const fetchData = async () => {
-    //set axios header dengan type Authorization + Bearer token
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    //fetch user from Rest API
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
-      .then((response) => {
-        //set response user to state
-        setUser(response.data);
-        setIsLoading(false); // Set isLoading to false when data is fetched
-      });
-  };
-
-  //hook useEffect
+  // Effect to handle the initial setup
   useEffect(() => {
-    //check token empty
     if (!token) {
-      //redirect login page
       Router.push("/login");
+    } else {
+      setIsLoading(false); // Set isLoading to false as we are not fetching user data
+
+      const el = document.getElementById("wrapper");
+      const toggleButton = document.getElementById("menu-toggle");
+
+      toggleButton.onclick = function () {
+        el.classList.toggle("toggled");
+      };
     }
-
-    //call function "fetchData"
-    fetchData();
-    const el = document.getElementById("wrapper");
-    const toggleButton = document.getElementById("menu-toggle");
-
-    toggleButton.onclick = function () {
-      el.classList.toggle("toggled");
-    };
   }, [token]);
 
   return (

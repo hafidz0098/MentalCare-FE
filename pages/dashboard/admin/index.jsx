@@ -5,7 +5,7 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Sidebar from "../../../components/sidebarAdmin";
+import Sidebar from "../../../components/sidebar";
 
 // Skeleton line component
 const SkeletonLine = () => (
@@ -33,23 +33,49 @@ export async function getServerSideProps(context) {
     };
 
     // Fetch data using the token
-    const req = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/konsulbyuser`,
+    const reqPost = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/posts`,
       config
     );
 
-    const konsuls = req.data.data.data;
+    const reqQuiz = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/quiz`,
+      config
+    );
+
+    const reqBantuan = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/bantuans`,
+      config
+    );
+
+    const reqPsi = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/psikolog`,
+      config
+    );
+
+
+
+    const posts = reqPost.data.data.data;
+    const quizs = reqQuiz.data.data.data;
+    const bantuans = reqBantuan.data.data.data;
+    const Psikologs = reqPsi.data.data;
 
     return {
       props: {
-        konsuls,
+        posts,
+        quizs,
+        bantuans,
+        Psikologs
       },
     };
   } catch (error) {
-    console.error("Error fetching konsultasi data:", error);
+    console.error("Error fetching data:", error);
     return {
       props: {
-        konsuls: [],
+        posts: [],
+        quizs: [],
+        bantuans: [],
+        Psikologs: [],
       },
     };
   }
@@ -109,13 +135,11 @@ function Dashboard(props) {
   };
 
   // Calculate total, answered, and pending consultations
-  const totalConsultations = props.konsuls.length;
-  const answeredConsultations = props.konsuls.filter(
-    (konsul) => konsul.status === "responded"
-  ).length;
-  const pendingConsultations = props.konsuls.filter(
-    (konsul) => konsul.status === "pending"
-  ).length;
+  const totalPost = props.posts.length;
+  const totalBantuan = props.bantuans.length;
+  const totalPsikolog = props.Psikologs.length;
+
+  const totalQuiz = props.quizs.length;
 
   useEffect(() => {
     if (!token) {
@@ -153,16 +177,17 @@ function Dashboard(props) {
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div className="card-dash bg-c-blue order-card">
+                  <div className="card-dash bg-c-yellow order-card">
                     <div className="card-block">
-                      <h6 className="m-b-20">Total Topik</h6>
+                      <h6 className="m-b-20">Total Materi</h6>
                       <h2 className="text-right">
-                        <span>{totalConsultations}</span>
+                        <span>{totalPost}</span>
                       </h2>
                     </div>
                   </div>
                 )}
               </div>
+
 
               <div className="col-md-4 col-xl-3">
                 {isLoading ? (
@@ -170,9 +195,9 @@ function Dashboard(props) {
                 ) : (
                   <div className="card-dash bg-c-yellow order-card">
                     <div className="card-block">
-                      <h6 className="m-b-20">Total Materi</h6>
+                      <h6 className="m-b-20">Total Quiz</h6>
                       <h2 className="text-right">
-                        <span>{pendingConsultations}</span>
+                        <span>{totalQuiz}</span>
                       </h2>
                     </div>
                   </div>
@@ -189,7 +214,7 @@ function Dashboard(props) {
                     <div className="card-block">
                       <h6 className="m-b-20">Total Bantuan Layanan</h6>
                       <h2 className="text-right">
-                        <span>{answeredConsultations}</span>
+                        <span>{totalBantuan}</span>
                       </h2>
                     </div>
                   </div>
@@ -205,7 +230,7 @@ function Dashboard(props) {
                     <div className="card-block">
                       <h6 className="m-b-20">Total Psikolog</h6>
                       <h2 className="text-right">
-                        <span>{answeredConsultations}</span>
+                        <span>{totalPsikolog}</span>
                       </h2>
                     </div>
                   </div>

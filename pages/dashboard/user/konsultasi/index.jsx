@@ -6,7 +6,7 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Sidebar from "../../../../components/sidebarUser";
+import Sidebar from "../../../../components/sidebar";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -14,14 +14,26 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import excerpt from "../../../../utils/excerpt";
 import { format } from "date-fns";
+import jwtDecode from "jwt-decode"; // Import jwt-decode to decode the token
 
 // Skeleton line component
 const SkeletonLine = () => (
   <div className="skeleton-line mb-3"></div>
 );
 
-function ShowKonsuls({ konsuls, user }) {
+function ShowKonsuls({ konsuls }) {
   const router = useRouter();
+
+  // Get token and decode user info from the token
+  const token = Cookies.get("token");
+  let user = {};
+  if (token) {
+    try {
+      user = jwtDecode(token);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+    }
+  }
 
   // State for loading status
   const [isLoading, setIsLoading] = useState(true);
@@ -29,21 +41,9 @@ function ShowKonsuls({ konsuls, user }) {
   // Fetch data function with delay
   const fetchData = async () => {
     try {
-      const token = Cookies.get("token");
       if (!token) {
         Router.push("/login");
         return;
-      }
-
-      // Set authorization header
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      // Fetch user data if not available
-      if (!user || Object.keys(user).length === 0) {
-        const userReq = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`
-        );
-        setUser(userReq.data);
       }
 
       // Simulate loading delay for 2 seconds
@@ -189,17 +189,9 @@ export async function getServerSideProps(context) {
 
     const konsuls = req.data.data.data;
 
-    // Fetch user data
-    const userReq = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`,
-      config
-    );
-    const user = userReq.data;
-
     return {
       props: {
         konsuls,
-        user,
       },
     };
   } catch (error) {
@@ -207,7 +199,6 @@ export async function getServerSideProps(context) {
     return {
       props: {
         konsuls: [],
-        user: {},
       },
     };
   }

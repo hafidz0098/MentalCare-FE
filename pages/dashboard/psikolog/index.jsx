@@ -1,11 +1,12 @@
-import Layout from "../../../layouts/admin";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
+import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
-import Sidebar from "../../../components/sidebarPsikolog";
+import Sidebar from "../../../components/sidebar";
+import Layout from "../../../layouts/admin";
 
 export async function getServerSideProps() {
   try {
@@ -31,29 +32,20 @@ export async function getServerSideProps() {
 
 function Dashboard(props) {
   const router = useRouter();
+  const [user, setUser] = useState({});
+  const token = Cookies.get("token");
+
+  const decodeToken = () => {
+    if (token) {
+      // Decode token JWT untuk mendapatkan data user
+      const decoded = jwt_decode(token);
+      setUser(decoded);
+    }
+  };
 
   //refresh data
   const refreshData = () => {
     router.replace(router.asPath);
-  };
-
-  //get token
-  const token = Cookies.get("token");
-
-  //state user
-  const [user, setUser] = useState({});
-
-  //function "fetchData"
-  const fetchData = async () => {
-    //set axios header dengan type Authorization + Bearer token
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    //fetch user from Rest API
-    await axios
-      .get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`)
-      .then((response) => {
-        //set response user to state
-        setUser(response.data);
-      });
   };
 
   // Calculate total, answered, and pending consultations
@@ -69,7 +61,7 @@ function Dashboard(props) {
     if (!token) {
       Router.push("/login");
     }
-    fetchData();
+    decodeToken();
     const el = document.getElementById("wrapper");
     const toggleButton = document.getElementById("menu-toggle");
 

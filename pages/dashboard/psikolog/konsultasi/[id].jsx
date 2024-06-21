@@ -7,7 +7,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
-import Sidebar from "../../../../components/sidebarPsikolog";
+import Sidebar from "../../../../components/sidebar";
 import { format } from "date-fns";
 import { Avatar } from "primereact/avatar";
 
@@ -151,7 +151,7 @@ function ShowKonsulMessage(props) {
                         <div className="media">
                           <div className="media-left mb-2">
                             <Avatar
-                              icon="pi pi-user"
+                              image={`https://ui-avatars.com/api/?name=${encodeURIComponent(konsuls.name)}`}
                               size="large"
                               shape="circle"
                             />
@@ -178,7 +178,7 @@ function ShowKonsulMessage(props) {
                           <div className="media">
                             <div className="media-left mb-2">
                               <Avatar
-                                icon="pi pi-user"
+                                image={`https://ui-avatars.com/api/?name=${encodeURIComponent(rep.sender)}`}
                                 size="large"
                                 shape="circle"
                               />

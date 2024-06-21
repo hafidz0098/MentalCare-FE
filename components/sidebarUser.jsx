@@ -1,59 +1,48 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Router from "next/router";
-import axios from "axios";
+import jwtDecode from "jwt-decode";
 import Cookies from "js-cookie";
 
 const Sidebar = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserFromToken = () => {
       const token = Cookies.get("token");
 
-      // Check if the token exists
       if (token) {
-        // Set axios header with Authorization + Bearer token
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
         try {
-          // Fetch user data from the API
-          const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BACKEND}/api/user`
-          );
-          setUser(response.data);
+          const decoded = jwtDecode(token);
+          setUser(decoded.user); // Ambil data user dari token yang sudah di-decode
         } catch (error) {
-          // Handle error fetching user data
-          console.error("Error fetching user data:", error);
+          console.error("Error decoding token:", error);
+          // Handle error decoding token, misalnya token tidak valid
+          setUser(null);
         }
+      } else {
+        // Handle case ketika tidak ada token
+        setUser(null);
       }
     };
 
-    fetchUser();
+    fetchUserFromToken();
   }, []);
 
   const logoutHandler = async () => {
     const token = Cookies.get("token");
 
-    // Check if the token exists
     if (token) {
-      // Set axios header with Authorization + Bearer token
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
       try {
-        // Fetch the logout endpoint
-        await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/logout`);
-        // Remove token from cookies
+        // Hapus token dari cookie
         Cookies.remove("token");
-        // Redirect to the login page
+        // Redirect ke halaman login
         Router.push("/login");
       } catch (error) {
-        // Handle error
         console.error("Logout error:", error);
       }
     }
   };
-
   return (
     <div className="primary-bg" id="sidebar-wrapper">
       <div className="sidebar-heading text-center py-4 second-text fs-4 fw-bold text-uppercase">
