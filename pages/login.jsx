@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import { Button } from "primereact/button";
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 function Login() {
   //define state
   const [email, setEmail] = useState("");

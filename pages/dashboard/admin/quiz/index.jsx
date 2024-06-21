@@ -13,7 +13,7 @@ import { Column } from "primereact/column";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 const SkeletonLine = () => (
   <div className="skeleton-line mb-3"></div>

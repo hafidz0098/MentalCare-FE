@@ -7,8 +7,8 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import React from "react";
 import Sidebar from "../../../../../components/sidebarAdmin";
-export const runtime = 'edge';
-
+export const runtime = 'experimental-edge';
+s
 function BantuanCreate() {
   //state
   const [image, setImage] = useState("");

@@ -14,7 +14,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import excerpt from "../../../../utils/excerpt";
 import { format } from "date-fns";
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 // Skeleton line component
 const SkeletonLine = () => (
