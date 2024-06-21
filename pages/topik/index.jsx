@@ -3,9 +3,11 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Styles from "../../styles/artikel.module.css";
+import { InputText } from "primereact/inputtext";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import { useRouter } from "next/router"; // Import useRouter from Next.js
 
 // Skeleton line component
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
@@ -41,6 +43,7 @@ export async function getServerSideProps(context) {
     return {
       props: {
         topiks,
+        token, // Pass token as prop to the component
       },
     };
   } catch (error) {
@@ -76,11 +79,18 @@ function getTokenFromRequest(req) {
 }
 
 function TopikIndex(props) {
-  const { topiks } = props;
+  const { topiks, token } = props;
   const [isLoading, setIsLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
+  const router = useRouter(); // Initialize useRouter
 
   useEffect(() => {
+    // Check if topiks is empty or not defined
+    if (!topiks || topiks.length === 0) {
+      // Redirect to login page if token is missing or invalid
+      router.push("/login");
+    }
+
     // Set timeout to simulate loading state
     const timeout = setTimeout(() => {
       setIsLoading(false);
@@ -88,7 +98,7 @@ function TopikIndex(props) {
 
     // Clear timeout if component unmounts before timeout is complete
     return () => clearTimeout(timeout);
-  }, []);
+  }, [topiks]); // Listen for changes in topiks
 
   const filteredTopiks = topiks.filter((topik) =>
     topik.name.toLowerCase().includes(globalFilter.toLowerCase())
