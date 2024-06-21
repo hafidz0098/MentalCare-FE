@@ -7,8 +7,6 @@ import React from "react";
 import Swal from "sweetalert2";
 import Sidebar from "../../../../../components/sidebarAdmin";
 
-export const runtime = 'experimental-edge';
-
 export async function getServerSideProps({ params }) {
   const req = await axios.get(
     `${process.env.NEXT_PUBLIC_API_BACKEND}/api/bantuans/${params.id}`

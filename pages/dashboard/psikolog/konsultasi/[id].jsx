@@ -10,7 +10,6 @@ import Swal from "sweetalert2";
 import Sidebar from "../../../../components/sidebarPsikolog";
 import { format } from "date-fns";
 import { Avatar } from "primereact/avatar";
-export const runtime = 'experimental-edge';
 
 export async function getServerSideProps({ params }) {
   try {

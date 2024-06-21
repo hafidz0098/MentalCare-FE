@@ -10,8 +10,6 @@ import Swal from "sweetalert2";
 import Sidebar from "../../../../components/sidebarUser";
 import { format } from "date-fns";
 import { Avatar } from "primereact/avatar";
-export const runtime = 'experimental-edge';
-
 // Skeleton line component
 const SkeletonLine = () => (
   <div className="skeleton-line-dash mb-3"></div>

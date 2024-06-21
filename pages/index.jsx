@@ -4,7 +4,6 @@ import Link from "next/link";
 import axios from "axios";
 import Styles from "../styles/Home.module.css";
 import { useState, useEffect } from "react";
-export const runtime = 'experimental-edge';
 
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
 

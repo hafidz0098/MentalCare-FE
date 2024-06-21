@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import React from "react";
 import Sidebar from "../../../../../components/sidebarAdmin";
-export const runtime = 'experimental-edge';
 
 function BantuanCreate() {
   //state

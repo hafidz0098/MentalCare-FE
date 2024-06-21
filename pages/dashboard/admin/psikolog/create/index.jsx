@@ -6,7 +6,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import Sidebar from "../../../../../components/sidebarAdmin";
-export const runtime = 'experimental-edge';
 
 function Register() {
   //define state

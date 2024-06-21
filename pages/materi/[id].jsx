@@ -9,7 +9,6 @@ import { format } from "date-fns";
 import Link from 'next/link';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
-export const runtime = 'experimental-edge';
 
 export async function getServerSideProps({ params }) {
     const postreq = await axios.get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/posts/${params.id}`);

@@ -3,7 +3,6 @@ import axios from "axios";
 import Link from 'next/link';
 import Head from "next/head";
 import Styles from "../../../styles/artikel.module.css"
-export const runtime = 'experimental-edge';
 
 export async function getServerSideProps(context) {
   try {

@@ -15,7 +15,6 @@ import "primereact/resources/themes/saga-blue/theme.css"; // Tema CSS (Anda dapa
 import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icon CSS
 import excerpt from "../../../../utils/excerpt";
-export const runtime = 'experimental-edge';
 
 export async function getServerSideProps() {
   try {

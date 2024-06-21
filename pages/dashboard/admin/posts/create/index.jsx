@@ -9,8 +9,6 @@ import React, { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import Sidebar from "../../../../../components/sidebarAdmin";
 
-export const runtime = 'experimental-edge';
-
 function PostCreate() {
   const editorRef = useRef(null);
 
