@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Head from "next/head";
 import Styles from "../../styles/artikel.module.css";
 
+export const runtime = 'edge';
+
 // Skeleton line component
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
 

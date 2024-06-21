@@ -3,6 +3,7 @@ import axios from "axios";
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import Styles from "../styles/Home.module.css";
+export const runtime = 'edge';
 
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
 

@@ -6,6 +6,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/sidebarUser";
+export const runtime = 'edge';
 
 // Skeleton line component
 const SkeletonLine = () => (

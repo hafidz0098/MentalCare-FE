@@ -5,6 +5,7 @@ import Router from "next/router";
 import axios from "axios";
 import Head from "next/head";
 import Swal from "sweetalert2";
+export const runtime = 'edge';
 
 function Konsultasi() {
   const [name, setName] = useState("");

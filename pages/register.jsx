@@ -7,6 +7,8 @@ import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import Link from "next/link";
 
+export const runtime = 'edge';
+
 function Register() {
   //define state
   const [name, setName] = useState("");

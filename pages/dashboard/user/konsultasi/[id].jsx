@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import Sidebar from "../../../../components/sidebarUser";
 import { format } from "date-fns";
 import { Avatar } from "primereact/avatar";
+export const runtime = 'edge';
 
 // Skeleton line component
 const SkeletonLine = () => (

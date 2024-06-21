@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import { Editor } from "@tinymce/tinymce-react";
 import Sidebar from "../../../../../components/sidebarAdmin";
 
+export const runtime = 'edge';
+
 const SkeletonLine = () => (
   <div className="skeleton-line mb-3"></div>
 );
