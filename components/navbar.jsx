@@ -6,40 +6,21 @@ import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = () => {
-      const token = Cookies.get("token");
-
-      // Check if the token exists
-      if (token) {
-        // Decode the token to get user data
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const [user, setUser] = useState(() => {
+    const token = Cookies.get("token");
+    return token ? jwtDecode(token) : null;
+  });
 
   const logoutHandler = async () => {
     const token = Cookies.get("token");
-
-    // Check if the token exists
     if (token) {
-      // Set axios header with Authorization + Bearer token
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
       try {
-        // Fetch the logout endpoint
-        await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/logout`);
-        // Remove token from cookies
+        await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/logout`, null, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         Cookies.remove("token");
-        // Redirect to the login page
         Router.push("/login");
       } catch (error) {
-        // Handle error
         console.error("Logout error:", error);
       }
     }
@@ -82,7 +63,6 @@ const Navbar = () => {
           </div>
         </div>
         {user ? (
-          // Jika user sudah login, tampilkan dropdown
           <div className="dropdown">
             <button
               className="btn btn-oren dropdown-toggle drop-btn"
@@ -108,7 +88,6 @@ const Navbar = () => {
             </ul>
           </div>
         ) : (
-          // Jika user belum login, tampilkan tombol login
           <Link href="/login" className="btn btn-oren login-btn">
             Login
           </Link>
