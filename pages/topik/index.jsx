@@ -37,7 +37,7 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-        topiks,
+        topiks: topiks || [],
       },
     };
   } catch (error) {
@@ -72,12 +72,11 @@ function getTokenFromRequest(req) {
   return null;
 }
 
-function TopikIndex(props) {
-  const { topiks } = props;
+function TopikIndex({ topiks }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Set loading to false immediately since data is already fetched
+    // Set loading to false since data is already fetched
     setIsLoading(false);
   }, []);
 
@@ -99,9 +98,9 @@ function TopikIndex(props) {
               ))}
             </div>
           ) : (
-            <div class="icon-boxes position-relative">
-              <div class="container position-relative">
-                <div class="row gy-4 mt-5 mb-5">
+            <div className="icon-boxes position-relative">
+              <div className="container position-relative">
+                <div className="row gy-4 mt-5 mb-5">
                   {topiks.length === 0 ? (
                     <div className="col-12">
                       <p>Belum ada topik yang tersedia.</p>
@@ -109,23 +108,22 @@ function TopikIndex(props) {
                   ) : (
                     topiks.map((topik) => (
                       <div
-                        class="col-xl-3 col-md-6"
+                        className="col-xl-3 col-md-6"
                         data-aos="fade-up"
                         data-aos-delay="100"
                         key={topik.id}
                       >
-                        <div class="icon-box">
-                          <div class="gambar_topik">
+                        <div className="icon-box">
+                          <div className="gambar_topik">
                             <img
                               src={topik.image}
                               alt=""
-                              srcset=""
                             />
                           </div>
-                          <h4 class="title">
+                          <h4 className="title">
                             <a
                               href={`/topik/materi/${topik.id}`}
-                              class="stretched-link"
+                              className="stretched-link"
                             >
                               {topik.name}
                             </a>
