@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import Sidebar from "../../../../components/sidebarAdmin";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext";
 import "primereact/resources/themes/saga-blue/theme.css"; // Tema CSS (Anda dapat memilih tema lain jika Anda mau)
 import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icon CSS
@@ -38,6 +39,7 @@ function ShowPost(props) {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   //refresh data
   const refreshData = () => {
@@ -132,6 +134,19 @@ function ShowPost(props) {
     return () => clearTimeout(timeout);
   }, []);
 
+  const header = (
+    <div className="table-header">
+      <span className="p-input-icon-left">
+        <i className="pi pi-search" />
+        <InputText 
+          type="search" 
+          onInput={(e) => setGlobalFilter(e.target.value)} 
+          placeholder="Search" 
+        />
+      </span>
+    </div>
+  );
+
   return (
     <Layout>
       <Head>
@@ -167,55 +182,55 @@ function ShowPost(props) {
                 ) : (
                   // Tampilkan DataTable jika isLoading false
                   <DataTable
-                  value={posts}
-                  paginator
-                  rows={5}
-                  rowsPerPageOptions={[5, 10, 20]}
-                >
-                  <Column
-                    header="No."
-                    body={(_, { rowIndex }) => rowIndex + 1}
-                  />
-                  <Column field="title" header="Judul"></Column>
-                  <Column
-                    field="content"
-                    header="Konten"
-                    body={(rowData) => (
-                      <span style={{ whiteSpace: "nowrap" }}>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: excerpt(rowData.content, 80),
-                          }}
-                        />
-                      </span>
-                    )}
-                  ></Column>
-                  <Column
-                    header="Aksi"
-                    body={(rowData) => (
-                      <div>
-                        <Link
-                          href={`/dashboard/admin/posts/edit/${rowData.id}`}
-                        >
-                          <button className="btn btn-sm btn-primary border-0 shadow-sm mb-3 me-3">
-                            <i className="fa fa-edit"></i>
+                    value={posts}
+                    paginator
+                    rows={7}
+                    rowsPerPageOptions={[7, 10, 20]}
+                    globalFilter={globalFilter}
+                    header={header}
+                  >
+                    <Column
+                      header="No."
+                      body={(_, { rowIndex }) => rowIndex + 1}
+                    />
+                    <Column field="title" header="Judul" />
+                    <Column
+                      field="content"
+                      header="Konten"
+                      body={(rowData) => (
+                        <span style={{ whiteSpace: "nowrap" }}>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: excerpt(rowData.content, 80),
+                            }}
+                          />
+                        </span>
+                      )}
+                    />
+                    <Column
+                      header="Aksi"
+                      body={(rowData) => (
+                        <div>
+                          <Link href={`/dashboard/admin/posts/edit/${rowData.id}`}>
+                            <button className="btn btn-sm btn-primary border-0 shadow-sm mb-3 me-3">
+                              <i className="fa fa-edit"></i>
+                            </button>
+                          </Link>
+                          <Link href={`/materi/${rowData.id}`} target="_blank">
+                            <button className="btn btn-sm btn-warning border-0 shadow-sm mb-3 me-3">
+                              <i className="fa fa-eye"></i>
+                            </button>
+                          </Link>
+                          <button
+                            onClick={() => deletePost(rowData.id)}
+                            className="btn btn-sm btn-danger border-0 shadow-sm mb-3"
+                          >
+                            <i className="fa fa-trash"></i>
                           </button>
-                        </Link>
-                        <Link href={`/materi/${rowData.id}`} target="_blank">
-                          <button className="btn btn-sm btn-warning border-0 shadow-sm mb-3 me-3">
-                            <i className="fa fa-eye"></i>
-                          </button>
-                        </Link>
-                        <button
-                          onClick={() => deletePost(rowData.id)}
-                          className="btn btn-sm btn-danger border-0 shadow-sm mb-3"
-                        >
-                          <i className="fa fa-trash"></i>
-                        </button>
-                      </div>
-                    )}
-                  ></Column>
-                </DataTable>
+                        </div>
+                      )}
+                    />
+                  </DataTable>
                 )}
               </div>
             </div>

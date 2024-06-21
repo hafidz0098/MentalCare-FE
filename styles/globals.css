@@ -15,6 +15,11 @@ body{
   color: black;
 }
 
+.no-focus-outline:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .navbar{
     background-color: #182231;
     padding: 15px;
@@ -299,8 +304,6 @@ button .navbar-toggler-icon{
 .mt-70{
   margin-top: 60px !important;
 }
-
-//dashboard
 
 .order-card {
   color: #fff;

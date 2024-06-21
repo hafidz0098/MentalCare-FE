@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import Sidebar from "../../../../components/sidebarAdmin";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
@@ -46,6 +47,7 @@ function ShowQuiz(props) {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   //refresh data
   const refreshData = () => {
@@ -140,6 +142,19 @@ function ShowQuiz(props) {
 
   }, []);
 
+  const header = (
+    <div className="table-header">
+      <span className="p-input-icon-left">
+        <i className="pi pi-search" />
+        <InputText 
+          type="search" 
+          onInput={(e) => setGlobalFilter(e.target.value)} 
+          placeholder="Search" 
+        />
+      </span>
+    </div>
+  );
+
   return (
     <Layout>
       <Head>
@@ -175,30 +190,32 @@ function ShowQuiz(props) {
                 ) : (
                   // Tampilkan DataTable jika isLoading false
                   <DataTable
-                  value={quiz}
-                  paginator
-                  rows={5}
-                  rowsPerPageOptions={[5, 10, 20]}
-                >
-                  <Column
-                    header="No."
-                    body={(_, { rowIndex }) => rowIndex + 1}
-                  />
-                  <Column field="question" header="Pertanyaan"></Column>
-                  <Column field="correct_answer" header="Jawaban Benar"></Column>
-                  <Column field="materi" header="Materi"></Column>
-                  <Column
-                    header="Aksi"
-                    body={(rowData) => (
-                      <button
-                        onClick={() => deleteQuiz(rowData.id)}
-                        className="btn btn-sm btn-danger border-0 shadow-sm mb-3 me-3"
-                      >
-                        <i className="fa fa-trash"></i>
-                      </button>
-                    )}
-                  ></Column>
-                </DataTable>
+                    value={quiz}
+                    paginator
+                    rows={5}
+                    rowsPerPageOptions={[5, 10, 20]}
+                    globalFilter={globalFilter}
+                    header={header}
+                  >
+                    <Column
+                      header="No."
+                      body={(_, { rowIndex }) => rowIndex + 1}
+                    />
+                    <Column field="question" header="Pertanyaan"/>
+                    <Column field="correct_answer" header="Jawaban Benar"></Column>
+                    <Column field="materi" header="Materi"></Column>
+                    <Column
+                      header="Aksi"
+                      body={(rowData) => (
+                        <button
+                          onClick={() => deleteQuiz(rowData.id)}
+                          className="btn btn-sm btn-danger border-0 shadow-sm mb-3 me-3"
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      )}
+                    ></Column>
+                  </DataTable>
                 )}
               </div>
             </div>

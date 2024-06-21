@@ -3,6 +3,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Styles from "../../styles/artikel.module.css";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 // Skeleton line component
 const SkeletonLine = () => <div className={`${Styles.skeletonLine} mb-3`}></div>;
@@ -41,7 +44,7 @@ export async function getServerSideProps(context) {
       },
     };
   } catch (error) {
-    console.error("Error fetching konsultasi data:", error);
+    console.error("Error fetching data:", error);
     return {
       props: {
         topiks: [],
@@ -75,16 +78,21 @@ function getTokenFromRequest(req) {
 function TopikIndex(props) {
   const { topiks } = props;
   const [isLoading, setIsLoading] = useState(true);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   useEffect(() => {
-    // Atur timeout untuk menunjukkan indikator loading selama 2 detik (misalnya)
+    // Set timeout to simulate loading state
     const timeout = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
 
-    // Bersihkan timeout jika komponen di-unmount sebelum timeout selesai
+    // Clear timeout if component unmounts before timeout is complete
     return () => clearTimeout(timeout);
   }, []);
+
+  const filteredTopiks = topiks.filter((topik) =>
+    topik.name.toLowerCase().includes(globalFilter.toLowerCase())
+  );
 
   return (
     <Layout>
@@ -93,9 +101,13 @@ function TopikIndex(props) {
       </Head>
       <div className={`mt-70 ${Styles.artikel}`}>
         <div className="container">
-          <div className="title-section-topik mb-3">Topik Kesehatan Mental</div>
-          {isLoading ? ( // Tampilkan indikator loading jika status loading true
-            <div className="row gy-4 mt-5 mb-5">
+          <div className="title-section-topik mb-5">Topik Kesehatan Mental</div>
+          <div className="input-group mb-3">
+              <span className="input-group-text" id="basic-addon1"><i className="pi pi-search"></i></span>
+              <input type="text" className="form-control no-focus-outline" placeholder="Cari topik..." aria-label="Cari topik..." aria-describedby="button-addon2" value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)}/>
+            </div>
+          {isLoading ? ( // Show loading skeleton if loading state is true
+            <div className="row gy-4 mt-2 mb-5">
               {[...Array(4)].map((_, index) => (
                 <div className="col-xl-3 col-md-6" key={index}>
                   <SkeletonLine />
@@ -104,39 +116,38 @@ function TopikIndex(props) {
               ))}
             </div>
           ) : (
-            <div class="icon-boxes position-relative">
-              <div class="container position-relative">
-                <div class="row gy-4 mt-5 mb-5">
-                  {topiks.length === 0 ? (
+            <div className="icon-boxes position-relative">
+              <div className="container position-relative">
+                <div className="row gy-4 mt-2 mb-5">
+                  {filteredTopiks.length === 0 ? (
                     <div className="col-12">
                       <p>Belum ada topik yang tersedia.</p>
                     </div>
                   ) : (
-                    topiks.map((topik) => (
+                    filteredTopiks.map((topik) => (
                       <div
-                        class="col-xl-3 col-md-6"
+                        className="col-xl-3 col-md-6"
                         data-aos="fade-up"
                         data-aos-delay="100"
                         key={topik.id}
                       >
-                        <div class="icon-box">
-                          <div class="gambar_topik">
-                            <img
-                              src={topik.image}
-                              alt=""
-                              srcset=""
-                            />
+                        <div className="icon-box">
+                          <div className="gambar_topik">
+                            <img src={topik.image} alt="" />
                           </div>
-                          <h4 class="title">
+                          <h4 className="title">
                             <a
                               href={`/topik/materi/${topik.id}`}
-                              class="stretched-link"
+                              className="stretched-link"
                             >
                               {topik.name}
                             </a>
                           </h4>
                           <hr />
-                          <p>{topik.finished_count} dari {topik.post_count} sudah diselesaikan</p>
+                          <p>
+                            {topik.finished_count} dari {topik.post_count} sudah
+                            diselesaikan
+                          </p>
                         </div>
                       </div>
                     ))

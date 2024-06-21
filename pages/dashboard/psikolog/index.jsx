@@ -101,7 +101,7 @@ function Dashboard(props) {
               </div>
 
               <div className="col-md-4 col-xl-3">
-                <div className="card-dash bg-c-yellow order-card">
+                <div className="card-dash bg-c-blue order-card">
                   <div className="card-block">
                     <h6 className="m-b-20">Konsultasi Pending</h6>
                     <h2 className="text-right">
@@ -112,7 +112,7 @@ function Dashboard(props) {
               </div>
 
               <div className="col-md-4 col-xl-3">
-                <div className="card-dash bg-c-green order-card">
+                <div className="card-dash bg-c-blue order-card">
                   <div className="card-block">
                     <h6 className="m-b-20">Konsultasi Terjawab</h6>
                     <h2 className="text-right">
