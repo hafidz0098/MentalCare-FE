@@ -24,24 +24,39 @@ export async function getServerSideProps(context) {
       };
     }
 
-    // Set the authorization header
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+    const decodedToken = jwtDecode(token);
+    const userRole = decodedToken.role;
+
+    if (userRole === "admin") {
+      return {
+        redirect: {
+          destination: "/dashboard/admin",
+          permanent: false,
+        },
+      };
+    } else if (userRole === "user") {
+      return {
+        redirect: {
+          destination: "/dashboard/user",
+          permanent: false,
+        },
+      };
+    } else if (userRole === "psikolog") {
+      return {
+        redirect: {
+          destination: "/dashboard/psikolog",
+          permanent: false,
+        },
+      };
+    }
 
     return {
-      props: {
-        config,
-      },
+      props: {},
     };
   } catch (error) {
     console.error("Error", error);
     return {
-      props: {
-        config: {},
-      },
+      props: {},
     };
   }
 }
