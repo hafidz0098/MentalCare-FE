@@ -85,7 +85,7 @@ function TopikIndex(props) {
     // Set timeout to simulate loading state
     const timeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 2000);
 
     // Clear timeout if component unmounts before timeout is complete
     return () => clearTimeout(timeout);
