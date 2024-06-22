@@ -24,15 +24,39 @@ export async function getServerSideProps(context) {
       };
     }
 
+    const decodedToken = jwtDecode(token);
+    const userRole = decodedToken.role;
+
+    if (userRole === "admin") {
+      return {
+        redirect: {
+          destination: "/dashboard/admin",
+          permanent: false,
+        },
+      };
+    } else if (userRole === "user") {
+      return {
+        redirect: {
+          destination: "/dashboard/user",
+          permanent: false,
+        },
+      };
+    } else if (userRole === "psikolog") {
+      return {
+        redirect: {
+          destination: "/dashboard/psikolog",
+          permanent: false,
+        },
+      };
+    }
+
     return {
-      props: {
-      },
+      props: {},
     };
   } catch (error) {
     console.error("Error", error);
     return {
-      props: {
-      },
+      props: {},
     };
   }
 }
@@ -62,48 +86,33 @@ function getTokenFromRequest(req) {
 function Dashboard(props) {
   const router = useRouter();
 
-  // Get token
+  // Get token once
   const token = Cookies.get("token");
 
-  // Decode the user info from the token
-  let user = {};
-  if (token) {
-    try {
-      user = jwtDecode(token);
-    } catch (error) {
-      console.error("Error decoding token:", error);
-    }
-  }
+  // Decode the user info from the token once
+  const user = token ? jwtDecode(token) : {};
+
+  // State isLoading
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (!token) {
-      router.push("/login");
-    } else {
-      if (user.role === "admin") {
-        router.push("/dashboard/admin");
-      } else if (user.role === "user") {
-        router.push("/dashboard/user");
-      } else if (user.role === "psikolog") {
-        router.push("/dashboard/psikolog");
-      }
-    }
-  }, [user, router, token]);
 
   useEffect(() => {
-    const el = document.getElementById("wrapper");
-    const toggleButton = document.getElementById("menu-toggle");
-
-    toggleButton.onclick = function () {
-      el.classList.toggle("toggled");
-    };
-
     const timer = setTimeout(() => {
-      setIsLoading(false); // Set isLoading to false after 5 seconds
+      setIsLoading(false); // Set isLoading to false after 2 seconds
     }, 5000);
 
     return () => clearTimeout(timer); // Clean up timer on component unmount
-  }, []);
+  }, []); // No dependencies, runs once on mount
+
+  useEffect(() => {
+    if (user.role === "admin") {
+      router.push("/dashboard/admin");
+    } else if (user.role === "user") {
+      router.push("/dashboard/user");
+    } else if (user.role === "psikolog") {
+      router.push("/dashboard/psikolog");
+    }
+  }, [user, router]);
 
   return (
     <Layout>
@@ -124,64 +133,22 @@ function Dashboard(props) {
           </nav>
           <div className="container">
             <div className="row">
-              <div className="col-md-4 col-xl-3">
-                {isLoading ? (
-                  <SkeletonLine />
-                ) : (
-                  <div className="card-dash bg-c-blue order-card">
-                    <div className="card-block">
-                      <h6 className="m-b-20">Total Konsultasi</h6>
-                      <h2 className="text-right">
-                        <span>{totalConsultations}</span>
-                      </h2>
+              {Object.entries(dashboardData).map(([key, value]) => (
+                <div key={key} className="col-md-4 col-xl-3">
+                  {isLoading ? (
+                    <SkeletonLine />
+                  ) : (
+                    <div className="card-dash bg-c-blue order-card">
+                      <div className="card-block">
+                        <h6 className="m-b-20">{key}</h6>
+                        <h2 className="text-right">
+                          <span>{value}</span>
+                        </h2>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="col-md-4 col-xl-3">
-                {isLoading ? (
-                  <SkeletonLine />
-                ) : (
-                  <div className="card-dash bg-c-blue order-card">
-                    <div className="card-block">
-                      <h6 className="m-b-20">Konsultasi Pending</h6>
-                      <h2 className="text-right">
-                        <span>{pendingConsultations}</span>
-                      </h2>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="col-md-4 col-xl-3">
-                {isLoading ? (
-                  <SkeletonLine />
-                ) : (
-                  <div className="card-dash bg-c-blue order-card">
-                    <div className="card-block">
-                      <h6 className="m-b-20">Konsultasi Terjawab</h6>
-                      <h2 className="text-right">
-                        <span>{answeredConsultations}</span>
-                      </h2>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="col-md-4 col-xl-3">
-                {isLoading ? (
-                  <SkeletonLine />
-                ) : (
-                  <div className="card-dash bg-c-blue order-card">
-                    <div className="card-block">
-                      <h6 className="m-b-20">Kuis Terselesaikan</h6>
-                      <h2 className="text-right">
-                        <span>{totalQuiz}</span>
-                      </h2>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
