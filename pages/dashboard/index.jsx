@@ -1,8 +1,6 @@
 import Layout from "../../layouts/admin";
 import { useState, useEffect } from "react";
 import Head from "next/head";
-import Router from "next/router";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Sidebar from "../../components/sidebar";
@@ -13,35 +11,65 @@ const SkeletonLine = () => (
   <div className="skeleton-line-dash mb-3"></div>
 );
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
   try {
-    const req = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/konsultasi`
-    );
-    const konsuls = req.data.data.data;
+    const token = getTokenFromRequest(context.req);
+
+    if (!token) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    // Set the authorization header
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
     return {
       props: {
-        konsuls: konsuls || [], // Ensure konsuls is an array
+        config,
       },
     };
   } catch (error) {
-    console.error("Error fetching konsultasi data:", error);
+    console.error("Error", error);
     return {
       props: {
-        konsuls: [],
+        config: {},
       },
     };
   }
 }
 
+// Function to extract token from the request
+function getTokenFromRequest(req) {
+  // Check if the request contains cookies
+  if (req.headers.cookie) {
+    // Extract cookies from the request headers
+    const cookies = req.headers.cookie
+      .split(";")
+      .map((cookie) => cookie.trim());
+
+    // Find the cookie containing the token
+    const tokenCookie = cookies.find((cookie) => cookie.startsWith("token="));
+
+    // If token cookie is found, extract and return the token
+    if (tokenCookie) {
+      return tokenCookie.split("=")[1];
+    }
+  }
+
+  // If token is not found, return null
+  return null;
+}
+
 function Dashboard(props) {
   const router = useRouter();
-
-  // Refresh data
-  const refreshData = () => {
-    router.replace(router.asPath);
-  };
 
   // Get token
   const token = Cookies.get("token");
@@ -59,44 +87,14 @@ function Dashboard(props) {
   // State isLoading
   const [isLoading, setIsLoading] = useState(true);
 
-  // Calculate total, answered, and pending consultations
-  const totalConsultations = props.konsuls ? props.konsuls.length : 0;
-  const answeredConsultations = props.konsuls
-    ? props.konsuls.filter((konsul) => konsul.status === "responded").length
-    : 0;
-  const pendingConsultations = props.konsuls
-    ? props.konsuls.filter((konsul) => konsul.status === "pending").length
-    : 0;
-
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false); // Set isLoading to false after 2 seconds
-    }, 3000);
+    const el = document.getElementById("wrapper");
+    const toggleButton = document.getElementById("menu-toggle");
 
-    return () => clearTimeout(timer); // Clean up timer on component unmount
-  }, []); // No dependencies, runs once on mount
-
-  useEffect(() => {
-    if (!token) {
-      Router.push("/login");
-    } else {
-      const el = document.getElementById("wrapper");
-      const toggleButton = document.getElementById("menu-toggle");
-
-      toggleButton.onclick = function () {
-        el.classList.toggle("toggled");
-      };
-
-      // Check user role and redirect if it's admin
-      if (user.role === "admin") {
-        router.push("/dashboard/admin");
-      } else if (user.role === "user") {
-        router.push("/dashboard/user");
-      } else if (user.role === "psikolog") {
-        router.push("/dashboard/psikolog");
-      }
-    }
-  }, [token, user, router]); // Add router as dependency for useEffect
+    toggleButton.onclick = function () {
+      el.classList.toggle("toggled");
+    };
+  }, [token]);
 
   return (
     <Layout>
@@ -125,7 +123,7 @@ function Dashboard(props) {
                     <div className="card-block">
                       <h6 className="m-b-20">Total Konsultasi</h6>
                       <h2 className="text-right">
-                        <span>0</span>
+                        <span>{totalConsultations}</span>
                       </h2>
                     </div>
                   </div>
@@ -136,11 +134,11 @@ function Dashboard(props) {
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div className="card-dash bg-c-yellow order-card">
+                  <div className="card-dash bg-c-blue order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Konsultasi Pending</h6>
                       <h2 className="text-right">
-                        <span>0</span>
+                        <span>{pendingConsultations}</span>
                       </h2>
                     </div>
                   </div>
@@ -151,11 +149,25 @@ function Dashboard(props) {
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div className="card-dash bg-c-green order-card">
+                  <div className="card-dash bg-c-blue order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Konsultasi Terjawab</h6>
                       <h2 className="text-right">
-                        <span>0</span>
+                        <span>{answeredConsultations}</span>
+                      </h2>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="col-md-4 col-xl-3">
+                {isLoading ? (
+                  <SkeletonLine />
+                ) : (
+                  <div className="card-dash bg-c-blue order-card">
+                    <div className="card-block">
+                      <h6 className="m-b-20">Kuis Terselesaikan</h6>
+                      <h2 className="text-right">
+                        <span>{totalQuiz}</span>
                       </h2>
                     </div>
                   </div>
