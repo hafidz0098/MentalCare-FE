@@ -53,8 +53,10 @@ export function middleware(req) {
       return response;
     }else if (userRole === "user" && req.nextUrl.pathname === "/dashboard"){
       response = NextResponse.redirect(new URL("/dashboard/user", req.url));
+      return response;
     }else{
       response = NextResponse.redirect(new URL("/dashboard/psikolog", req.url));
+      return response;
     }
   }
 
