@@ -99,7 +99,7 @@ function Dashboard(props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false); // Set isLoading to false after 2 seconds
-    }, 5000);
+    }, 2000);
 
     return () => clearTimeout(timer); // Clean up timer on component unmount
   }, []); // No dependencies, runs once on mount
