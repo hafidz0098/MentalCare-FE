@@ -177,7 +177,7 @@ function Dashboard(props) {
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div className="card-dash bg-c-yellow order-card">
+                  <div className="card-dash bg-c-blue order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Total Materi</h6>
                       <h2 className="text-right">
@@ -193,7 +193,7 @@ function Dashboard(props) {
                 {isLoading ? (
                   <SkeletonLine />
                 ) : (
-                  <div className="card-dash bg-c-yellow order-card">
+                  <div className="card-dash bg-c-blue order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Total Quiz</h6>
                       <h2 className="text-right">
@@ -210,7 +210,7 @@ function Dashboard(props) {
                   <SkeletonLine />
                   </div>
                 ) : (
-                  <div className="card-dash bg-c-green order-card">
+                  <div className="card-dash bg-c-blue order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Total Bantuan Layanan</h6>
                       <h2 className="text-right">
@@ -226,7 +226,7 @@ function Dashboard(props) {
                   <SkeletonLine />
                   </div>
                 ) : (
-                  <div className="card-dash bg-c-green order-card">
+                  <div className="card-dash bg-c-blue order-card">
                     <div className="card-block">
                       <h6 className="m-b-20">Total Psikolog</h6>
                       <h2 className="text-right">
