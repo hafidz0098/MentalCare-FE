@@ -184,8 +184,8 @@ function ShowPost(props) {
                   <DataTable
                     value={posts}
                     paginator
-                    rows={7}
-                    rowsPerPageOptions={[7, 10, 20]}
+                    rows={5}
+                    rowsPerPageOptions={[5, 10, 20]}
                     globalFilter={globalFilter}
                     header={header}
                   >
