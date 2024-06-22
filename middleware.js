@@ -45,19 +45,10 @@ export function middleware(req) {
     ) {
       // Redirect to a general dashboard or an appropriate page
       response = NextResponse.redirect(new URL("/dashboard", req.url));
+      response.headers.set('ngrok-skip-browser-warning', 'true');
       return response;
     }
-
-    if (userRole === "admin" && req.nextUrl.pathname === "/dashboard") {
-      response = NextResponse.redirect(new URL("/dashboard/admin", req.url));
-      return response;
-    }else if (userRole === "user" && req.nextUrl.pathname === "/dashboard"){
-      response = NextResponse.redirect(new URL("/dashboard/user", req.url));
-      return response;
-    }else{
-      response = NextResponse.redirect(new URL("/dashboard/psikolog", req.url));
-      return response;
-    }
+    
   }
 
   response = NextResponse.next();
