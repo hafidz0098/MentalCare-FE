@@ -80,12 +80,7 @@ function TopikIndex(props) {
   const [isLoading, setIsLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const token = Cookies.get("token");
-
   useEffect(() => {
-    if (!token) {
-      Router.push("/login");
-    }
     // Set timeout to simulate loading state
     const timeout = setTimeout(() => {
       setIsLoading(false);
