@@ -51,10 +51,5 @@ export function middleware(req) {
   }
 
   response = NextResponse.next();
-  response.headers.set('ngrok-skip-browser-warning', 'true');
   return response;
 }
-
-export const config = {
-  matcher: "/:path*", // Apply middleware to all routes
-};
