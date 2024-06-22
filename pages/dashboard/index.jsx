@@ -24,39 +24,15 @@ export async function getServerSideProps(context) {
       };
     }
 
-    const decodedToken = jwtDecode(token);
-    const userRole = decodedToken.role;
-
-    if (userRole === "admin") {
-      return {
-        redirect: {
-          destination: "/dashboard/admin",
-          permanent: false,
-        },
-      };
-    } else if (userRole === "user") {
-      return {
-        redirect: {
-          destination: "/dashboard/user",
-          permanent: false,
-        },
-      };
-    } else if (userRole === "psikolog") {
-      return {
-        redirect: {
-          destination: "/dashboard/psikolog",
-          permanent: false,
-        },
-      };
-    }
-
     return {
-      props: {},
+      props: {
+      },
     };
   } catch (error) {
     console.error("Error", error);
     return {
-      props: {},
+      props: {
+      },
     };
   }
 }
@@ -98,9 +74,21 @@ function Dashboard(props) {
       console.error("Error decoding token:", error);
     }
   }
-
-  // State isLoading
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!token) {
+      router.push("/login");
+    } else {
+      if (user.role === "admin") {
+        router.push("/dashboard/admin");
+      } else if (user.role === "user") {
+        router.push("/dashboard/user");
+      } else if (user.role === "psikolog") {
+        router.push("/dashboard/psikolog");
+      }
+    }
+  }, [user, router, token]);
 
   useEffect(() => {
     const el = document.getElementById("wrapper");
@@ -109,7 +97,13 @@ function Dashboard(props) {
     toggleButton.onclick = function () {
       el.classList.toggle("toggled");
     };
-  }, [token]);
+
+    const timer = setTimeout(() => {
+      setIsLoading(false); // Set isLoading to false after 5 seconds
+    }, 5000);
+
+    return () => clearTimeout(timer); // Clean up timer on component unmount
+  }, []);
 
   return (
     <Layout>
