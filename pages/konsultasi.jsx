@@ -60,9 +60,9 @@ function Konsultasi() {
   };
 
   useEffect(() => {
-    if (!token) {
-      Router.push("/login");
-    }
+    // if (!token) {
+    //   Router.push("/login");
+    // }
     fetchData();
   }, []);
 

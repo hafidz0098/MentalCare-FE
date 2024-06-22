@@ -15,17 +15,14 @@ export async function getServerSideProps(context) {
   try {
     const token = getTokenFromRequest(context.req);
 
-    if (!token) {
-      console.log("No token found in cookies.");
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false,
-        },
-      };
-    }
-
-    console.log("Token found:", token);
+    // if (!token) {
+    //   return {
+    //     redirect: {
+    //       destination: "/login",
+    //       permanent: false,
+    //     },
+    //   };
+    // }
 
     // Set the authorization header
     const config = {
@@ -83,12 +80,12 @@ function TopikIndex(props) {
   const { topiks } = props;
   const [isLoading, setIsLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState("");
-  const token = Cookies.get("token");
+  // const token = Cookies.get("token");
 
   useEffect(() => {
-    if (!token) {
-      Router.push("/login");
-    }
+    // if (!token) {
+    //   Router.push("/login");
+    // }
     // Set timeout to simulate loading state
     const timeout = setTimeout(() => {
       setIsLoading(false);
