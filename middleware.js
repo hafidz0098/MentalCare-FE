@@ -4,7 +4,7 @@ import jwtDecode from "jwt-decode";
 
 export function middleware(req) {
   const cookie = req.cookies.get("token")?.value;
-  const decodedToken = jwtDecode(cookie);
+  const decodedToken = cookie ? jwtDecode(cookie) : null;
   const currentTime = Math.floor(Date.now() / 1000);
 
   let response;
