@@ -44,21 +44,28 @@ export async function getServerSideProps(context) {
       config
     );
 
+    const totQuiz = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BACKEND}/api/quiz`
+    );
+
     const konsuls = reqKonsul.data?.data?.data || [];
     const quizs = reqQuiz.data?.data?.data || [];
+    const totalQuiz = totQuiz.data.data.data;
 
     return {
       props: {
         konsuls,
         quizs,
+        totalQuiz,
       },
     };
   } catch (error) {
     console.error("Error fetching konsultasi data:", error);
     return {
       props: {
-        konsuls: [],
-        quizs: [],
+        konsuls: 0,
+        quizs: 0,
+        totalQuiz: 0,
       },
     };
   }
@@ -113,9 +120,15 @@ function Dashboard(props) {
   const pendingConsultations = props.konsuls?.filter(
     (konsul) => konsul.status === "pending"
   ).length || 0;
-  const totalQuiz = props.quizs?.filter(
-    (quiz) => quiz.status === "Lulus"
-  ).length || 0;
+  const uniqueQuizIds = new Set();
+  const totalQuiz = props.quizs?.reduce((count, quiz) => {
+    if (quiz.status === "Lulus" && !uniqueQuizIds.has(quiz.materi)) {
+      uniqueQuizIds.add(quiz.materi);
+      return count + 1;
+    }
+    return count;
+  }, 0) || 0;
+  const quizzes = props.totalQuiz?.length || 0;
 
   useEffect(() => {
     if (!token) {
@@ -203,7 +216,7 @@ function Dashboard(props) {
                     <div className="card-block">
                       <h6 className="m-b-20">Kuis Terselesaikan</h6>
                       <h2 className="text-right">
-                        <span>{totalQuiz}</span>
+                        <span>{totalQuiz} / {quizzes}</span>
                       </h2>
                     </div>
                   </div>

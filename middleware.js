@@ -12,8 +12,8 @@ export function middleware(req) {
   if (
     req.nextUrl.pathname.startsWith("/dashboard") ||
     req.nextUrl.pathname.startsWith("/admin") ||
-    // req.nextUrl.pathname.startsWith("/konsultasi") ||
-    // req.nextUrl.pathname.startsWith("/topik") ||
+    req.nextUrl.pathname.startsWith("/konsultasi") ||
+    req.nextUrl.pathname.startsWith("/topik") ||
     req.nextUrl.pathname.startsWith("/materi")
   ) {
     if (!cookie) {
