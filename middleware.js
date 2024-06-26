@@ -2,52 +2,44 @@ import { NextResponse } from "next/server";
 import jwtDecode from "jwt-decode";
 
 export function middleware(req) {
-  const cookie = req.cookies.get("token")?.value;
-  const decodedToken = cookie ? jwtDecode(cookie) : null;
+  const { pathname } = req.nextUrl || {};
+  const { cookies } = req || {};
+  const token = cookies?.get("token")?.value;
   const currentTime = Math.floor(Date.now() / 1000);
 
-  let response;
-
   if (
-    req.nextUrl.pathname.startsWith("/dashboard") ||
-    req.nextUrl.pathname.startsWith("/admin") ||
-    req.nextUrl.pathname.startsWith("/konsultasi") ||
-    req.nextUrl.pathname.startsWith("/topik") ||
-    req.nextUrl.pathname.startsWith("/materi")
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/konsultasi") ||
+    pathname?.startsWith("/topik") ||
+    pathname?.startsWith("/materi")
   ) {
-    if (!cookie) {
-      response = NextResponse.redirect(new URL("/login", req.url));
-      response.headers.set('ngrok-skip-browser-warning', 'true');
-      return response;
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    if (decodedToken.exp < currentTime) {
-      // Token has expired, perform logout and redirect to login
-      response = NextResponse.redirect(new URL("/login", req.url));
-      response.headers.set('ngrok-skip-browser-warning', 'true');
-      return response;
-    }
+    try {
+      const decodedToken = jwtDecode(token);
 
-    // Restrict access based on role
-    const userRole = decodedToken.role;
-    if (
-      (userRole === "admin" &&
-        (req.nextUrl.pathname.startsWith("/dashboard/user") ||
-          req.nextUrl.pathname.startsWith("/dashboard/psikolog"))) ||
-      (userRole === "user" &&
-        (req.nextUrl.pathname.startsWith("/dashboard/admin") ||
-          req.nextUrl.pathname.startsWith("/dashboard/psikolog"))) ||
-      (userRole === "psikolog" &&
-        (req.nextUrl.pathname.startsWith("/dashboard/admin") ||
-          req.nextUrl.pathname.startswith("/dashboard/user")))
-    ) {
-      // Redirect to a general dashboard or an appropriate page
-      response = NextResponse.redirect(new URL("/dashboard", req.url));
-      response.headers.set('ngrok-skip-browser-warning', 'true');
-      return response;
+      if (decodedToken.exp < currentTime) {
+        return NextResponse.redirect(new URL("/login", req.url));
+      }
+
+      const userRole = decodedToken.role;
+      const restrictedPaths = {
+        admin: ["/dashboard/user", "/dashboard/psikolog"],
+        user: ["/dashboard/admin", "/dashboard/psikolog"],
+        psikolog: ["/dashboard/admin", "/dashboard/user"],
+      };
+
+      if (restrictedPaths[userRole]?.some(path => pathname?.startsWith(path))) {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
+    } catch (error) {
+      console.error("Error decoding JWT token:", error);
+      return NextResponse.redirect(new URL("/login", req.url));
     }
   }
 
-  response = NextResponse.next();
-  return response;
+  return NextResponse.next();
 }
