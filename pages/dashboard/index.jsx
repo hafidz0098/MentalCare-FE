@@ -15,40 +15,40 @@ export async function getServerSideProps(context) {
   try {
     const token = getTokenFromRequest(context.req);
 
-    if (!token) {
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false,
-        },
-      };
-    }
+    // if (!token) {
+    //   return {
+    //     redirect: {
+    //       destination: "/login",
+    //       permanent: false,
+    //     },
+    //   };
+    // }
 
     const decodedToken = jwtDecode(token);
     const userRole = decodedToken.role;
 
-    if (userRole === "admin") {
-      return {
-        redirect: {
-          destination: "/dashboard/admin",
-          permanent: false,
-        },
-      };
-    } else if (userRole === "user") {
-      return {
-        redirect: {
-          destination: "/dashboard/user",
-          permanent: false,
-        },
-      };
-    } else if (userRole === "psikolog") {
-      return {
-        redirect: {
-          destination: "/dashboard/psikolog",
-          permanent: false,
-        },
-      };
-    }
+    // if (userRole === "admin") {
+    //   return {
+    //     redirect: {
+    //       destination: "/dashboard/admin",
+    //       permanent: false,
+    //     },
+    //   };
+    // } else if (userRole === "user") {
+    //   return {
+    //     redirect: {
+    //       destination: "/dashboard/user",
+    //       permanent: false,
+    //     },
+    //   };
+    // } else if (userRole === "psikolog") {
+    //   return {
+    //     redirect: {
+    //       destination: "/dashboard/psikolog",
+    //       permanent: false,
+    //     },
+    //   };
+    // }
 
     return {
       props: {},
@@ -104,15 +104,15 @@ function Dashboard(props) {
     return () => clearTimeout(timer); // Clean up timer on component unmount
   }, []); // No dependencies, runs once on mount
 
-  useEffect(() => {
-    if (user.role === "admin") {
-      router.push("/dashboard/admin");
-    } else if (user.role === "user") {
-      router.push("/dashboard/user");
-    } else if (user.role === "psikolog") {
-      router.push("/dashboard/psikolog");
-    }
-  }, [user, router]);
+  // useEffect(() => {
+  //   if (user.role === "admin") {
+  //     router.push("/dashboard/admin");
+  //   } else if (user.role === "user") {
+  //     router.push("/dashboard/user");
+  //   } else if (user.role === "psikolog") {
+  //     router.push("/dashboard/psikolog");
+  //   }
+  // }, [user, router]);
 
   return (
     <Layout>
