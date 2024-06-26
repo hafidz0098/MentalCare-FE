@@ -16,7 +16,17 @@ const Navbar = () => {
       if (token) {
         // Decode the token to get user data
         const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
+
+        // Check if the token is expired
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp < currentTime) {
+          // Token is expired, remove it and set user to null
+          Cookies.remove("token");
+          setUser(null);
+        } else {
+          // Token is valid, set user data
+          setUser(decodedToken);
+        }
       }
     };
 

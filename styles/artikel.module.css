@@ -6,6 +6,23 @@
   padding-bottom: 60px;
 }
 
+/* artikel.module.css */
+
+.swal2-radio-options {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+}
+
+.swal2-radio-options label {
+  margin-bottom: 8px;
+}
+
+.swal2-radio-options input[type="radio"] {
+  margin-right: 8px;
+}
+
+
 .detail_artikel{
     padding-top: 100px;
     min-height: 100vh;

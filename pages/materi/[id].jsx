@@ -9,20 +9,31 @@ import { format } from "date-fns";
 import Link from 'next/link';
 import jwtDecode from 'jwt-decode';
 import Cookies from 'js-cookie';
+import { RadioButton } from "primereact/radiobutton";
 
 export async function getServerSideProps({ params }) {
-    const postreq = await axios.get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/posts/${params.id}`);
-    const postres = await postreq.data.data;
+    try {
+        const postreq = await axios.get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/posts/${params.id}`);
+        const postres = postreq.data.data;
 
-    const postId = postres.id;
-    const quizreq = await axios.get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/quizbypost/${postId}`);
-    const quizres = await quizreq.data.data;
+        const postId = postres.id;
+        const quizreq = await axios.get(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/quizbypost/${postId}`);
+        const quizres = quizreq.data.data;
 
-    return {
-        props: {
-            post: postres,
-            quiz: quizres
-        },
+        return {
+            props: {
+                post: postres,
+                quiz: quizres
+            },
+        }
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return {
+            props: {
+                post: null,
+                quiz: null
+            },
+        }
     }
 }
 
@@ -37,7 +48,6 @@ function Post(props) {
     }, []);
 
     const handleQuizSubmit = async () => {
-        // Memeriksa apakah quiz memiliki nilai atau tidak
         if (!quiz || quiz.length === 0 || !quiz[0].question) {
             Swal.fire({
                 title: 'Error',
@@ -46,78 +56,108 @@ function Post(props) {
             });
             return;
         }
-    
+
         const quizQuestion = quiz[0].question;
-    
+        const options = {
+            a: quiz[0].option_a,
+            b: quiz[0].option_b,
+            c: quiz[0].option_c,
+            d: quiz[0].option_d
+        };
+
+        const optionHtml = `
+            <p>${quizQuestion}</p>
+            <div className="flex align-items-center">
+                <input type="radio" id="option-d" name="quiz" value="${options.a}">
+                <label htmlFor=${options.a}} className="ml-2">${options.a}</label>
+            </div>
+            <div className="flex align-items-center">
+                <input type="radio" id="option-d" name="quiz" value="${options.b}">
+                <label htmlFor=${options.b}} className="ml-2">${options.b}</label>
+            </div>
+            <div className="flex align-items-center">
+                <input type="radio" id="option-d" name="quiz" value="${options.c}">
+                <label htmlFor=${options.c}} className="ml-2">${options.c}</label>
+            </div>
+            <div className="flex align-items-center">
+                <input type="radio" id="option-d" name="quiz" value="${options.d}">
+                <label htmlFor=${options.d}} className="ml-2">${options.d}</label>
+            </div>
+            
+        `;
+
         const { value: answer, dismiss } = await Swal.fire({
             title: "Quiz",
-            input: 'text',
-            inputLabel: quizQuestion,
-            inputPlaceholder: 'Your answer',
+            html: optionHtml,
+            focusConfirm: false,
+            preConfirm: () => {
+                const selectedOption = document.querySelector('input[name="quiz"]:checked');
+                if (selectedOption) {
+                    return selectedOption.value;
+                } else {
+                    Swal.showValidationMessage('You need to choose an answer!');
+                }
+            },
             showCancelButton: true,
             confirmButtonText: 'Submit',
             cancelButtonText: 'Cancel',
             showLoaderOnConfirm: true,
             customClass: {
-                inputLabel: 'swal2-label-custom' // Menambahkan kelas kustom ke label input
-            },
-            preConfirm: async (answer) => {
-                if (answer === undefined) {
-                    dismiss(Swal.DismissReason.cancel);
-                }
-                try {
-                    // Mendapatkan quiz_id dari data kuis
-                    const quizId = quiz[0].id;
-                    const postId = post.id;
-
-                    // Get the user ID from the token in cookies
-                    const token = Cookies.get("token"); // Assumes you store the JWT in cookies under the key 'token'
-                    if (!token) {
-                        Swal.showValidationMessage('User not authenticated');
-                        return;
-                    }
-                    
-                    const decodedToken = jwtDecode(token);
-                    const userId = decodedToken.sub; // Change this according to your token structure
-                    if (!userId) {
-                        Swal.showValidationMessage('Invalid token');
-                        return;
-                    }
-
-                    // Melakukan panggilan API untuk mengirim jawaban kuis
-                    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/attemptquiz`, {
-                        quiz_id: quizId,
-                        user_answer: answer,
-                        post_id: postId,
-                        user_id: userId // Send the user ID with the request
-                    });
-    
-                    return response.data; // Mengembalikan respons dari panggilan API
-                } catch (error) {
-                    // Menampilkan pesan kesalahan jika terjadi kesalahan saat mengirim jawaban
-                    Swal.showValidationMessage(`Request failed: ${error}`);
-                }
+                htmlContainer: 'swal2-html-container-custom'
             },
             allowOutsideClick: () => !Swal.isLoading()
         });
-    
+
         if (answer) {
-            if (answer.data.skor === 100) {
-                Swal.fire({
-                    title: 'Jawaban benar',
-                    html: `Nilai: ${answer.data.skor}`,
-                    icon: 'success'
+            try {
+                const quizId = quiz[0].id;
+                const postId = post.id;
+
+                const token = Cookies.get("token");
+                if (!token) {
+                    Swal.showValidationMessage('User not authenticated');
+                    return;
+                }
+
+                const decodedToken = jwtDecode(token);
+                const userId = decodedToken.sub;
+                if (!userId) {
+                    Swal.showValidationMessage('Invalid token');
+                    return;
+                }
+
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BACKEND}/api/attemptquiz`, {
+                    quiz_id: quizId,
+                    user_answer: answer,
+                    post_id: postId,
+                    user_id: userId
                 });
-            } else {
-                Swal.fire({
-                    title: 'Jawaban salah',
-                    html: `Nilai: ${answer.data.skor}`,
-                    icon: 'error'
-                });
+
+                if (response.data.data.skor === 100) {
+                    Swal.fire({
+                        title: 'Jawaban benar',
+                        html: `Nilai: ${response.data.data.skor}`,
+                        icon: 'success'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Jawaban salah',
+                        html: `Nilai: ${response.data.data.skor}`,
+                        icon: 'error'
+                    });
+                }
+
+                console.log(response);
+            } catch (error) {
+                Swal.showValidationMessage(`Request failed: ${error}`);
             }
         }
+    };
+
+    if (!post) {
+        return <div>Loading...</div>;
     }
-    
+
     return (
         <Layout>
             <div className={Styles.detail_artikel}>
@@ -134,7 +174,7 @@ function Post(props) {
                                 <p>Tanggal Posting : {format(
                                     new Date(post.created_at),
                                     "dd MMM yyyy"
-                                  )}</p>
+                                )}</p>
                                 <div className={Styles.card_content_detail} dangerouslySetInnerHTML={{ __html: post.content }}></div>
                                 <div className={Styles.video_container}>
                                     {showPlayer && <ReactPlayer url={post.video} />}

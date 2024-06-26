@@ -5,13 +5,16 @@ import axios from "axios";
 import Head from "next/head";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
-import React, { useRef } from "react";
 import Sidebar from "../../../../../components/sidebarAdmin";
 
 function QuizCreate() {
   // State
   const [post, setPost] = useState([]);
   const [question, setQuestion] = useState("");
+  const [optionA, setOptionA] = useState("");
+  const [optionB, setOptionB] = useState("");
+  const [optionC, setOptionC] = useState("");
+  const [optionD, setOptionD] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("");
   const [selectedPost, setSelectedPost] = useState("");
   const [selectedPostId, setSelectedPostId] = useState("");
@@ -25,6 +28,10 @@ function QuizCreate() {
     formData.append("post_id", selectedPostId);
     formData.append("materi", selectedPost);
     formData.append("question", question);
+    formData.append("option_a", optionA);
+    formData.append("option_b", optionB);
+    formData.append("option_c", optionC);
+    formData.append("option_d", optionD);
     formData.append("correct_answer", correctAnswer);
 
     await axios
@@ -116,25 +123,6 @@ function QuizCreate() {
                         </select>
                       </div>
 
-                      <div className="form-group mb-3" style={{ display: 'none' }}>
-                        <label className="form-label fw-bold">ID</label>
-                        <select
-                          className="form-select"
-                          aria-label="Default select example"
-                          value={selectedPostId}
-                          onChange={(e) => setSelectedPostId(e.target.value)}
-                        >
-                          <option value="" disabled>
-                            Pilih Materi
-                          </option>
-                          {post.map((pos) => (
-                            <option key={pos.id} value={pos.id} disabled>
-                              {pos.id}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
                       <div className="form-group mb-3">
                         <label className="form-label fw-bold">Pertanyaan</label>
                         <input
@@ -152,6 +140,70 @@ function QuizCreate() {
                       )}
 
                       <div className="form-group mb-3">
+                        <label className="form-label fw-bold">Pilihan A</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={optionA}
+                          onChange={(e) => setOptionA(e.target.value)}
+                          placeholder="Masukkan Pilihan A"
+                        />
+                      </div>
+                      {validation.option_a && (
+                        <div className="alert alert-danger">
+                          {validation.option_a}
+                        </div>
+                      )}
+
+                      <div className="form-group mb-3">
+                        <label className="form-label fw-bold">Pilihan B</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={optionB}
+                          onChange={(e) => setOptionB(e.target.value)}
+                          placeholder="Masukkan Pilihan B"
+                        />
+                      </div>
+                      {validation.option_b && (
+                        <div className="alert alert-danger">
+                          {validation.option_b}
+                        </div>
+                      )}
+
+                      <div className="form-group mb-3">
+                        <label className="form-label fw-bold">Pilihan C</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={optionC}
+                          onChange={(e) => setOptionC(e.target.value)}
+                          placeholder="Masukkan Pilihan C"
+                        />
+                      </div>
+                      {validation.option_c && (
+                        <div className="alert alert-danger">
+                          {validation.option_c}
+                        </div>
+                      )}
+
+                      <div className="form-group mb-3">
+                        <label className="form-label fw-bold">Pilihan D</label>
+                        <input
+                          className="form-control"
+                          type="text"
+                          value={optionD}
+                          onChange={(e) => setOptionD(e.target.value)}
+                          placeholder="Masukkan Pilihan D"
+                        />
+                      </div>
+                      {validation.option_d && (
+                        <div className="alert alert-danger">
+                          {validation.option_d}
+                        </div>
+                      )}
+
+                      <div className="form-group mb-3">
                         <label className="form-label fw-bold">Jawaban Benar</label>
                         <input
                           className="form-control"
@@ -161,9 +213,9 @@ function QuizCreate() {
                           placeholder="Masukkan jawaban benar"
                         />
                       </div>
-                      {validation.correctAnswer && (
+                      {validation.correct_answer && (
                         <div className="alert alert-danger">
-                          {validation.correctAnswer}
+                          {validation.correct_answer}
                         </div>
                       )}
 
