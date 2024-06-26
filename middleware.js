@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import Cookies from "js-cookie"; // Import js-cookie
 import jwtDecode from "jwt-decode";
 
 export function middleware(req) {
@@ -24,7 +23,6 @@ export function middleware(req) {
 
     if (decodedToken.exp < currentTime) {
       // Token has expired, perform logout and redirect to login
-      Cookies.remove("token"); // Remove token from cookies
       response = NextResponse.redirect(new URL("/login", req.url));
       response.headers.set('ngrok-skip-browser-warning', 'true');
       return response;
@@ -41,14 +39,13 @@ export function middleware(req) {
           req.nextUrl.pathname.startsWith("/dashboard/psikolog"))) ||
       (userRole === "psikolog" &&
         (req.nextUrl.pathname.startsWith("/dashboard/admin") ||
-          req.nextUrl.pathname.startsWith("/dashboard/user")))
+          req.nextUrl.pathname.startswith("/dashboard/user")))
     ) {
       // Redirect to a general dashboard or an appropriate page
       response = NextResponse.redirect(new URL("/dashboard", req.url));
       response.headers.set('ngrok-skip-browser-warning', 'true');
       return response;
     }
-    
   }
 
   response = NextResponse.next();
