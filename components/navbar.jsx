@@ -4,6 +4,7 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -53,6 +54,22 @@ const Navbar = () => {
         console.error("Logout error:", error);
       }
     }
+  };
+
+  const handleLogoutClick = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out of your account.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutHandler();
+      }
+    });
   };
 
   return (
@@ -109,7 +126,7 @@ const Navbar = () => {
                 </Link>
               </li>
               <li
-                onClick={logoutHandler}
+                onClick={handleLogoutClick}
                 className="dropdown-item"
                 href="/logout"
               >

@@ -180,7 +180,6 @@ function ShowRiwayat(props) {
                         )}
                       />
                       <Column field="materi" header="Materi"></Column>
-                      <Column field="score" header="Score"></Column>
                       <Column
                         field="status"
                         header="Status"

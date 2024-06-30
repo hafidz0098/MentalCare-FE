@@ -4,6 +4,7 @@ import Router from "next/router";
 import axios from "axios";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
+import Swal from "sweetalert2";
 
 const SkeletonSidebar = () => (
   <div className="primary-bg" id="sidebar-wrapper">
@@ -56,6 +57,22 @@ const Sidebar = () => {
         console.error("Logout error:", error);
       }
     }
+  };
+
+  const handleLogoutClick = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out of your account.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutHandler();
+      }
+    });
   };
 
   if (!isLoggedIn) { // Menampilkan SkeletonSidebar sampai user berhasil login
@@ -145,7 +162,7 @@ const Sidebar = () => {
         )}
 
         <button
-          onClick={logoutHandler}
+          onClick={handleLogoutClick}
           className="list-group-item list-group-item-action bg-transparent second-text"
         >
           <i className="fa fa-power-off me-3"></i>Logout
