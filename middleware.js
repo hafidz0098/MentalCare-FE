@@ -10,8 +10,6 @@ export function middleware(req) {
   if (
     pathname?.startsWith("/dashboard") ||
     pathname?.startsWith("/admin") ||
-    pathname?.startsWith("/konsultasi") ||
-    pathname?.startsWith("/topik") ||
     pathname?.startsWith("/materi")
   ) {
     if (!token) {
