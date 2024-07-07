@@ -80,11 +80,7 @@ function Home({ topiks = [], error }) {
             Yuk Kenali Berbagai Macam Penyakit Mental
           </div>
           <div className="row mt-5">
-            {[...Array(4)].map((_, index) => (
-              <div
-                className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch"
-                key={index}
-              >
+              <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
                 <div className="card">
                   <div className="card-body">
                     <h5 className="card-title">Skizofrenia</h5>
@@ -97,7 +93,42 @@ function Home({ topiks = [], error }) {
                   </div>
                 </div>
               </div>
-            ))}
+              <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Gangguan Mood</h5>
+                    <p className="card-text">
+                    Jenis gangguan mental selanjutnya berhubungan dengan suasana hati, 
+                    terkadang pasien bisa mengalami kebahagian atau kesedihan berlebih di luar batas normal. 
+                    Sebenarnya, mood swing seperti ini sering dialami banyak orang.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Gangguan Kecemasan</h5>
+                    <p className="card-text">
+                    Keluhan pertama yang dialami adalah rasa cemas berlebihan,
+                    dimana penderitanya merasa khawatir dan ketakutan secara terus-menerus. 
+                    Kondisi ini bisa terjadi kepada siapa saja, terutama bagi wanita di atas usia 30 tahun.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-3 col-md-6 col-sm-12 d-flex align-items-stretch">
+                <div className="card">
+                  <div className="card-body">
+                    <h5 className="card-title">Gangguan Kepribadian</h5>
+                    <p className="card-text">
+                    Gangguan kepribadian menyebabkan penderitanya memiliki pola pikir dan perilaku yang tidak normal 
+                    dan sulit untuk diubah. Penderita gangguan ini kesulitan untuk memahami situasi dan orang lain
+                    sehingga sulit berbaur.
+                    </p>
+                  </div>
+                </div>
+              </div>
           </div>
         </div>
       </div>
